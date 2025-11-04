@@ -5,19 +5,23 @@ import uuid
 
 User = get_user_model()
 
-#Usuario personalizado, no necesita username (POST)
 class CustomUserCreateSerializer(UserCreateSerializer):
     acepta_politicas = serializers.BooleanField(write_only=True)
 
     class Meta(UserCreateSerializer.Meta):
         model = User
-        # aquí NO incluimos username
         fields = ("id", "email", "password", "acepta_politicas")
 
     def create(self, validated_data):
-    # Autogenerar username si no viene
         if "username" not in validated_data:
             validated_data["username"] = f"user_{uuid.uuid4().hex[:8]}"
+
+        # Forzar rol estudiante
+        validated_data["is_estudiante"] = True
+        validated_data["is_admin_interu"] = False
+        validated_data["is_staff"] = False
+        validated_data["is_superuser"] = False
+
         return super().create(validated_data)
 
     def validate_acepta_politicas(self, value):
@@ -25,8 +29,8 @@ class CustomUserCreateSerializer(UserCreateSerializer):
             raise serializers.ValidationError("Debe aceptar las políticas de uso para registrarse.")
         return value
 
-#Usuario personalizado, no necesita username (GET)
 class CustomUserSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         model = User
-        fields = ("id", "email", "acepta_politicas")
+        fields = ("id", "email", "acepta_politicas", "is_estudiante", "is_admin_interu")
+
