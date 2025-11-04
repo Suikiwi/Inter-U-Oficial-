@@ -1,0 +1,88 @@
+@import "tailwindcss/preflight";
+@import "tailwindcss/utilities";
+
+:root {
+  font-family: 'Inter', system-ui, sans-serif;
+  color-scheme: dark;
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+a {
+  color: #a78bfa; 
+  text-decoration: none;
+}
+a:hover {
+  color: #c4b5fd; 
+  text-decoration: underline;
+}
+body {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+.glow-animation {
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 5px #9333ea;
+  }
+  to {
+    box-shadow: 0 0 20px #9333ea;
+  }
+}
+
+
+h1, h2, h3 {
+  font-weight: 700;
+  line-height: 1.2;
+  color: #ffffff;
+}
+
+button {
+  font-family: inherit;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  background-color: #7c3aed; 
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background-color: #6d28d9; 
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  color: #fff;
+  border: 1px solid #334155; 
+}
+input::placeholder {
+  color: #94a3b8; 
+}
