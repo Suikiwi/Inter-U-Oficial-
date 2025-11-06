@@ -68,8 +68,10 @@ DJOSER = {
     },
 }
 
-
+### EMAIL SETTINGS - PARA DESARROLLO - CONSOLE BACKEND
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@interu.com"
+
 #######################################################################
 
 
