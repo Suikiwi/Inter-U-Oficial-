@@ -18,9 +18,10 @@ class PerfilCompletoSerializer(serializers.ModelSerializer):
             'area',
             'biografia',
             'foto',
-            'habilidades_ofrecidas',  # ahora lista
+            'habilidades_ofrecidas', # ahora lista
         ]
         read_only_fields = ['id_perfil']
+
 
 class ConfirmarEliminarCuentaSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)

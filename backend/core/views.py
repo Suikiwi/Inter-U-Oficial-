@@ -339,6 +339,7 @@ class PerfilDetailView(generics.RetrieveUpdateAPIView):
         return perfil
 
 
+
 class EliminarMiCuenta(APIView):
     permission_classes = [permissions.IsAuthenticated]
 

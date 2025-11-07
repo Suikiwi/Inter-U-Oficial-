@@ -167,3 +167,8 @@ const PasswordResetConfirm: React.FC = () => {
 };
 
 export default PasswordResetConfirm;
+
+///python manage.py shell para evaluar si se cambio la contraseña 
+//from accounts.models import User
+//u = User.objects.get(email="alicia.norambuena@inacapmail.cl")
+//print(u.check_password("Proyectointeru1234"))

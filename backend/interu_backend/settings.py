@@ -117,30 +117,32 @@ SIMPLE_JWT = {
 DJOSER = {
     "USER_ID_FIELD": "id",
     "LOGIN_FIELD": "email",
-    
-    # ✅ RUTAS RELATIVAS (no URLs completas)
     "ACTIVATION_URL": "activate/{uid}/{token}",
     "PASSWORD_RESET_CONFIRM_URL": "reset-password-confirm/{uid}/{token}",
-    
-    # ✅ SERIALIZER CON LOGGING
+
+    "DOMAIN": "localhost:5173",
+    "SITE_NAME": "Inter-U",
+
+    "SEND_ACTIVATION_EMAIL": True,   # habilita envío de correo de activación
+    "SEND_CONFIRMATION_EMAIL": False,
+
+    "PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": True,
+    "PASSWORD_RESET_TIMEOUT": 1800,
+
     "SERIALIZERS": {
         "user_create": "accounts.serializers.CustomUserCreateSerializer",
         "user": "accounts.serializers.CustomUserSerializer",
         "password_reset_confirm": "accounts.serializers.LoggingPasswordResetConfirmSerializer",
     },
-    
-    "SEND_ACTIVATION_EMAIL": False,
-    "SEND_CONFIRMATION_EMAIL": False,
-    "PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": True,
-    "PASSWORD_RESET_TIMEOUT": 1800,  # 30 minutos
 }
-# ==================== EMAIL SETTINGS (GMAIL) ====================
+
+    
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'interusihu@gmail.com'
-EMAIL_HOST_PASSWORD = 'kkymiwcxdwnybyfx'  # ⚠️ App Password de Google
+EMAIL_HOST_PASSWORD = 'kkymiwcxdwnybyfx'  #  App Password de Google
 DEFAULT_FROM_EMAIL = 'interusihu@gmail.com'
 
 # ==================== LOGGING (DEBUG) ====================

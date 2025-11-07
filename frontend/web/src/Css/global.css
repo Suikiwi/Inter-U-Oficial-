@@ -1,0 +1,34 @@
+/* Smooth, visible scrollbars for WebKit and Firefox */
+.custom-scroll {
+  scrollbar-width: thin;            /* Firefox */
+  scrollbar-color: #7c3aed #1f2937; /* thumb and track */
+}
+
+/* Chrome/Safari/Edge (WebKit) */
+.custom-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.6); /* slate-800-ish */
+  border-radius: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #7c3aed, #9333ea); /* purple gradient */
+  border-radius: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #9333ea, #a855f7);
+}
+
+/* src/Css/global.css */
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #7c3aed #1f2937;
+}
+.custom-scroll::-webkit-scrollbar { width: 10px; }
+.custom-scroll::-webkit-scrollbar-track { background: rgba(31,41,55,.6); border-radius: 8px; }
+.custom-scroll::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#7c3aed,#9333ea); border-radius: 8px; }
+.custom-scroll::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg,#9333ea,#a855f7); }
