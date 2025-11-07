@@ -1,0 +1,7 @@
+La base de datos se elimina ya que no se puede subir entonces hay que configurar todo el tiempo esto para que funcione lo de los correos
+
+python manage.py shell
+
+from django.contrib.sites.models import Site
+site = Site.objects.get(id=1)
+print(site.id, site.domain, site.name)

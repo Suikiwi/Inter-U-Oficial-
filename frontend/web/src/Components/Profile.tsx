@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useProfile } from "../Hooks/useProfile";
@@ -154,19 +155,28 @@ const Profile: React.FC = () => {
                     </p>
                   </div>
 
-                  <button
-                    onClick={() => setShowEditModal(true)}
-                    className="w-full bg-linear-to-r from-primary to-purple-600 text-white py-3 rounded-lg font-medium hover:from-purple-600 hover:to-primary transition-all mb-3"
-                  >
-                    <i className="ri-edit-line mr-2"></i> Editar Perfil
-                  </button>
+                  <div className="mt-3 grid grid-cols-1 gap-3">
+                    <button
+                      onClick={() => setShowEditModal(true)}
+                      className="w-full bg-linear-to-r from-primary to-purple-600 text-white py-3 rounded-lg font-medium hover:from-purple-600 hover:to-primary transition-all"
+                    >
+                      <i className="ri-edit-line mr-2"></i> Editar Perfil
+                    </button>
 
-                  <button
-                    onClick={() => setShowDeleteModal(true)}
-                    className="w-full bg-red-600/80 hover:bg-red-600 text-white py-3 rounded-lg font-medium transition-all"
-                  >
-                    <i className="ri-delete-bin-line mr-2"></i> Eliminar Cuenta
-                  </button>
+                    <Link
+                      to="/publications"
+                      className="w-full inline-flex items-center justify-center px-4 py-3 border border-purple-600 text-purple-100 rounded-lg font-medium hover:bg-purple-700/10 transition-all"
+                    >
+                      <i className="ri-folder-open-line mr-2"></i> Ver publicaciones
+                    </Link>
+
+                    <button
+                      onClick={() => setShowDeleteModal(true)}
+                      className="w-full bg-red-600/80 hover:bg-red-600 text-white py-3 rounded-lg font-medium transition-all"
+                    >
+                      <i className="ri-delete-bin-line mr-2"></i> Eliminar Cuenta
+                    </button>
+                  </div>
                 </div>
               </div>
 

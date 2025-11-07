@@ -1,3 +1,4 @@
+import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./Components/Login";
 import "./Css/global.css";
@@ -8,9 +9,9 @@ import PasswordResetConfirm from "./Components/PasswordResetConfirm";
 import ActivateAccount from "./Components/ActivateAccount";
 import PublicationsPage from "./Pages/PublicationsPage";
 
-function RequireAuth({ children }: { children: JSX.Element }) {
+function RequireAuth({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem("accessToken");
-  return token ? children : <Navigate to="/login" replace />;
+  return token ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
 function App() {
@@ -53,6 +54,3 @@ function App() {
 }
 
 export default App;
-
-
-//npm i -D @types/react @types/react-dom

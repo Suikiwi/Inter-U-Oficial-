@@ -1,6 +1,4 @@
-"""
-Django settings for interu_backend project.
-"""
+
 SITE_ID = 1
 
 from pathlib import Path
