@@ -15,6 +15,7 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    
 
     /* Linting */
     "strict": true,
@@ -25,4 +26,5 @@
     "noUncheckedSideEffectImports": true
   },
   "include": ["src"]
+  
 }

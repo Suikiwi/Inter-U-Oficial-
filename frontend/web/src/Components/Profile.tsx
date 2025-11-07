@@ -9,13 +9,10 @@ import styles from "../Css/Profile.module.css";
 const Profile: React.FC = () => {
   const navigate = useNavigate();
   const { perfil, user, loading, error, updateProfile, deleteAccount } = useProfile();
-  
+
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [alert, setAlert] = useState<{
-    type: "error" | "success" | "info";
-    message: string;
-  } | null>(null);
+  const [alert, setAlert] = useState<{ type: "error" | "success" | "info"; message: string } | null>(null);
 
   // Verificar autenticación
   useEffect(() => {
@@ -86,19 +83,6 @@ const Profile: React.FC = () => {
       <div className="fixed top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse pointer-events-none"></div>
       <div className="fixed bottom-1/4 right-1/4 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl animate-pulse delay-1000 pointer-events-none"></div>
 
-      {/* Alertas */}
-      {alert && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4">
-          <div className={`px-6 py-3 rounded-lg border text-sm backdrop-blur-md ${
-            alert.type === "error" 
-              ? "bg-red-100 border-red-400 text-red-700" 
-              : "bg-green-100 border-green-400 text-green-700"
-          }`}>
-            <div className="font-medium">{alert.message}</div>
-          </div>
-        </div>
-      )}
-
       {/* Header */}
       <header className={`relative z-10 ${styles.glassEffect}`}>
         <div className="max-w-7xl mx-auto px-4 py-4 border-b border-purple-500/20">
@@ -117,6 +101,19 @@ const Profile: React.FC = () => {
         </div>
       </header>
 
+      {/* Alertas */}
+      {alert && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4">
+          <div className={`px-6 py-3 rounded-lg border text-sm backdrop-blur-md ${
+            alert.type === "error" 
+              ? "bg-red-100 border-red-400 text-red-700" 
+              : "bg-green-100 border-green-400 text-green-700"
+          }`}>
+            <div className="font-medium">{alert.message}</div>
+          </div>
+        </div>
+      )}
+
       {/* Main */}
       <main className="relative z-10 py-12 px-4">
         <div className="max-w-7xl mx-auto">
@@ -126,9 +123,17 @@ const Profile: React.FC = () => {
             <aside className="space-y-8">
               <div className={`rounded-xl p-8 ${styles.glassEffect} ${styles.glowAnimation}`}>
                 <div className="text-center">
-                  <div className={`w-24 h-24 mx-auto mb-6 rounded-full bg-linear-to-r from-primary to-purple-600 flex items-center justify-center ${styles.floatAnimation}`}>
-                    <i className="ri-user-line text-white text-3xl"></i>
-                  </div>
+                  {perfil?.foto ? (
+                    <img
+                      src={perfil.foto}
+                      alt="Foto de perfil"
+                      className="w-24 h-24 mx-auto mb-6 rounded-full object-cover border border-slate-600/50"
+                    />
+                  ) : (
+                    <div className={`w-24 h-24 mx-auto mb-6 rounded-full bg-linear-to-r from-primary to-purple-600 flex items-center justify-center ${styles.floatAnimation}`}>
+                      <i className="ri-user-line text-white text-3xl"></i>
+                    </div>
+                  )}
                   
                   <h1 className="text-2xl font-bold text-purple-100 mb-1">
                     {perfil?.alias || `${perfil?.nombre || ''} ${perfil?.apellido || ''}`.trim() || "Estudiante"}
@@ -171,11 +176,14 @@ const Profile: React.FC = () => {
                   <i className="ri-star-line mr-2"></i> Habilidades Ofrecidas
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {perfil?.habilidades_ofrecidas?.map((hab, idx) => (
-                    <span key={idx} className="px-3 py-1 bg-purple-600/30 text-purple-200 rounded-full text-sm">
-                      {hab}
-                    </span>
-                  )) || <p className="text-slate-400 text-sm">No hay habilidades registradas</p>}
+                  {perfil?.habilidades_ofrecidas?.length
+                    ? perfil.habilidades_ofrecidas.map((hab, idx) => (
+                        <span key={idx} className="px-3 py-1 bg-purple-600/30 text-purple-200 rounded-full text-sm">
+                          {hab}
+                        </span>
+                      ))
+                    : <p className="text-slate-400 text-sm">No hay habilidades registradas</p>
+                  }
                 </div>
               </div>
             </aside>

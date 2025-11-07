@@ -15,14 +15,14 @@ const ActivateAccount: React.FC = () => {
       try {
         await axios.post(`${API_BASE_URL}/api/auth/users/activation/`, { uid, token });
         setStatus("success");
-        setMessage("✅ Cuenta activada exitosamente. Ahora puedes iniciar sesión.");
+        setMessage("Cuenta activada exitosamente. Ahora puedes iniciar sesión.");
       } catch (err: any) {
         setStatus("error");
-        setMessage(`❌ Error: ${err.response?.data?.detail || "El enlace es inválido o expiró"}`);
+        setMessage(`Error: ${err.response?.data?.detail || "El enlace es inválido o expiró"}`);
       }
     };
     if (uid && token) activate();
-    else { setStatus("error"); setMessage("❌ Enlace de activación inválido"); }
+    else { setStatus("error"); setMessage(" Enlace de activación inválido"); }
   }, [uid, token]);
 
   return (
