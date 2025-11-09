@@ -4,6 +4,7 @@
   scrollbar-color: #7c3aed #1f2937; /* thumb and track */
 }
 
+
 /* Chrome/Safari/Edge (WebKit) */
 .custom-scroll::-webkit-scrollbar {
   width: 10px;

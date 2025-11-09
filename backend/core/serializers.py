@@ -29,10 +29,15 @@ class ConfirmarEliminarCuentaSerializer(serializers.Serializer):
 #----------------------- PUBLICACIONES SERIALIZERS
 
 class PublicacionSerializer(serializers.ModelSerializer):
+    autor_alias = serializers.SerializerMethodField()
+
     class Meta:
         model = Publicacion
         fields = '__all__'
-        read_only_fields = ('estudiante', 'fecha_creacion', 'habilidades_ofrecidas')
+
+    def get_autor_alias(self, obj):
+        perfil = getattr(obj.estudiante, "perfil", None)
+        return perfil.alias if perfil else f"Usuario {obj.estudiante.id}"
 
     def create(self, validated_data):
         user = self.context['request'].user

@@ -52,10 +52,13 @@ class MisPublicacionesView(generics.ListAPIView):
         return Publicacion.objects.filter(estudiante=self.request.user)
 
 class PublicacionListCreateView(generics.ListCreateAPIView):
-    queryset = Publicacion.objects.all()
+    queryset = Publicacion.objects.filter(estado=True)
     serializer_class = PublicacionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]  # ← acceso público
 
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
 class PublicacionDetailView(generics.RetrieveAPIView):
     queryset = Publicacion.objects.filter(estado=True)
     serializer_class = PublicacionSerializer
