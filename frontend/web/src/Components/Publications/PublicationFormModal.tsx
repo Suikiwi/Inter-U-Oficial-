@@ -54,7 +54,7 @@ const PublicationFormModal: React.FC<Props> = ({ idEdit, onClose, onSaved }) => 
   };
 
   return (
-    <div className="fixed inset-0 z-[9999]">
+    <div className="fixed inset-0 z-9999">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full h-full flex items-center justify-center p-4">
         <div

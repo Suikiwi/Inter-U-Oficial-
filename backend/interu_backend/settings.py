@@ -50,19 +50,11 @@ ROOT_URLCONF = 'interu_backend.urls'
 WSGI_APPLICATION = 'interu_backend.wsgi.application'
 ASGI_APPLICATION = "interu_backend.asgi.application"
 
-
-
-
-
-
-
-# ==================== CHANNELS CONFIGURATION ====================
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
-
 # ==================== TEMPLATES ====================
 TEMPLATES = [
     {
