@@ -1,12 +1,12 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useProfile } from "../Hooks/useProfile";
 import type { PerfilData } from "../Hooks/useProfile";
 import EditProfileModal from "./EditProfileModal";
 import DeleteAccountModal from "./DeleteAccountModal";
 import styles from "../Css/Profile.module.css";
-import MyPublicationsList from "./Publications/MyPublicationsList"; // ← nuevo import
+import MyPublicationsList from "./Publications/MyPublicationsList";
+import PublicationFormModal from "./Publications/PublicationFormModal";
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
@@ -14,6 +14,7 @@ const Profile: React.FC = () => {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [alert, setAlert] = useState<{ type: "error" | "success" | "info"; message: string } | null>(null);
 
   useEffect(() => {
@@ -89,7 +90,10 @@ const Profile: React.FC = () => {
             <Link to="/" className="font-['Pacifico'] text-2xl text-primary font-bold">Inter-U</Link>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-slate-300">{user?.email}</span>
-              <button onClick={handleLogout} className="bg-red-600/80 hover:bg-red-600 px-4 py-2 rounded-lg text-sm text-white transition-all">
+              <button
+                onClick={handleLogout}
+                className="bg-red-600/80 hover:bg-red-600 px-4 py-2 rounded-lg text-sm text-white transition-all"
+              >
                 Cerrar sesión
               </button>
             </div>
@@ -100,9 +104,13 @@ const Profile: React.FC = () => {
       {/* Alertas */}
       {alert && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4">
-          <div className={`px-6 py-3 rounded-lg border text-sm backdrop-blur-md ${
-            alert.type === "error" ? "bg-red-100 border-red-400 text-red-700" : "bg-green-100 border-green-400 text-green-700"
-          }`}>
+          <div
+            className={`px-6 py-3 rounded-lg border text-sm backdrop-blur-md ${
+              alert.type === "error"
+                ? "bg-red-100 border-red-400 text-red-700"
+                : "bg-green-100 border-green-400 text-green-700"
+            }`}
+          >
             <div className="font-medium">{alert.message}</div>
           </div>
         </div>
@@ -117,15 +125,23 @@ const Profile: React.FC = () => {
               <div className={`rounded-xl p-8 ${styles.glassEffect} ${styles.glowAnimation}`}>
                 <div className="text-center">
                   {perfil?.foto ? (
-                    <img src={perfil.foto} alt="Foto de perfil" className="w-24 h-24 mx-auto mb-6 rounded-full object-cover border border-slate-600/50" />
+                    <img
+                      src={perfil.foto}
+                      alt="Foto de perfil"
+                      className="w-24 h-24 mx-auto mb-6 rounded-full object-cover border border-slate-600/50"
+                    />
                   ) : (
-                    <div className={`w-24 h-24 mx-auto mb-6 rounded-full bg-linear-to-r from-primary to-purple-600 flex items-center justify-center ${styles.floatAnimation}`}>
+                    <div
+                      className={`w-24 h-24 mx-auto mb-6 rounded-full bg-linear-to-r from-primary to-purple-600 flex items-center justify-center ${styles.floatAnimation}`}
+                    >
                       <i className="ri-user-line text-white text-3xl"></i>
                     </div>
                   )}
 
                   <h1 className="text-2xl font-bold text-purple-100 mb-1">
-                    {perfil?.alias || `${perfil?.nombre || ""} ${perfil?.apellido || ""}`.trim() || "Estudiante"}
+                    {perfil?.alias ||
+                      `${perfil?.nombre || ""} ${perfil?.apellido || ""}`.trim() ||
+                      "Estudiante"}
                   </h1>
 
                   <p className="text-slate-400 mb-4">{perfil?.carrera}</p>
@@ -138,7 +154,8 @@ const Profile: React.FC = () => {
                       <i className="ri-graduation-cap-line mr-2"></i> {perfil?.area}
                     </p>
                     <p className="text-sm text-slate-300">
-                      <i className="ri-shield-check-line mr-2"></i> {perfil?.habilidades_ofrecidas?.length || 0} habilidades
+                      <i className="ri-shield-check-line mr-2"></i>{" "}
+                      {perfil?.habilidades_ofrecidas?.length || 0} habilidades
                     </p>
                   </div>
 
@@ -173,14 +190,18 @@ const Profile: React.FC = () => {
                   <i className="ri-star-line mr-2"></i> Habilidades Ofrecidas
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {perfil?.habilidades_ofrecidas?.length
-                    ? perfil.habilidades_ofrecidas.map((hab, idx) => (
-                        <span key={idx} className="px-3 py-1 bg-purple-600/30 text-purple-200 rounded-full text-sm">
-                          {hab}
-                        </span>
-                      ))
-                    : <p className="text-slate-400 text-sm">No hay habilidades registradas</p>
-                  }
+                  {perfil?.habilidades_ofrecidas?.length ? (
+                    perfil.habilidades_ofrecidas.map((hab, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 bg-purple-600/30 text-purple-200 rounded-full text-sm"
+                      >
+                        {hab}
+                      </span>
+                    ))
+                  ) : (
+                    <p className="text-slate-400 text-sm">No hay habilidades registradas</p>
+                  )}
                 </div>
               </div>
             </aside>
@@ -190,7 +211,8 @@ const Profile: React.FC = () => {
               <div className={`rounded-xl p-8 ${styles.glassEffect} ${styles.glowAnimation}`}>
                 <h2 className="text-2xl font-bold text-purple-100 mb-4">Bienvenido a tu Perfil</h2>
                 <p className="text-slate-300 leading-relaxed">
-                  {perfil?.biografia || "Aún no has agregado una biografía. Edita tu perfil para contarnos más sobre ti."}
+                  {perfil?.biografia ||
+                    "Aún no has agregado una biografía. Edita tu perfil para contarnos más sobre ti."}
                 </p>
               </div>
 
@@ -199,7 +221,9 @@ const Profile: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-1">
                     <p className="text-sm text-slate-400">Nombre completo</p>
-                    <p className="font-medium text-white">{perfil?.nombre} {perfil?.apellido}</p>
+                    <p className="font-medium text-white">
+                      {perfil?.nombre} {perfil?.apellido}
+                    </p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm text-slate-400">Email institucional</p>
@@ -228,9 +252,27 @@ const Profile: React.FC = () => {
                 </div>
               </div>
 
-              {/* Mis publicaciones incrustadas */}
+              {/* Mis publicaciones con botón de creación */}
               <div className={`rounded-xl p-8 ${styles.glassEffect}`}>
+                <div className="flex justify-between items-center mb-6">
+                 
+                </div>
+
                 <MyPublicationsList />
+                 <button
+                    onClick={() => setShowCreateModal(true)}
+                    className="w-10 h-10 flex items-center justify-center bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-all"
+                    title="Crear publicación"
+                  >
+                    <i className="ri-add-line text-2xl" />
+                  </button>
+
+                {showCreateModal && (
+                  <PublicationFormModal
+                    onClose={() => setShowCreateModal(false)}
+                    onSaved={() => setShowCreateModal(false)}
+                  />
+                )}
               </div>
             </section>
           </div>

@@ -1,111 +1,124 @@
-import React, { useState } from "react";
-import FiltersPanel from "./FiltersPanel";
-import { usePublications } from "../../Hooks/usePublicaciones";
+import React, { useEffect, useState } from "react";
+import { obtenerPublicacionesGlobal, eliminarPublicacion } from "../../Services/publications";
 import type { Publication } from "./Types";
+import PublicationFormModal from "./PublicationFormModal";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { getUserIdFromAccessToken } from "../../Services/auth";
 
 const PublicationsFeed: React.FC = () => {
-  const { items, filtros, setFiltros, loading, error } = usePublications();
-  const [showFilters, setShowFilters] = useState(false);
+  const [publicaciones, setPublicaciones] = useState<Publication[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [editId, setEditId] = useState<number | undefined>(undefined);
   const navigate = useNavigate();
+  const userId = getUserIdFromAccessToken();
 
-  //  Función para iniciar chat
+  const fetchData = async () => {
+    try {
+      const data = await obtenerPublicacionesGlobal();
+      setPublicaciones(data);
+    } catch (err) {
+      console.error("Error al cargar publicaciones:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const iniciarChat = async (idPublicacion: number) => {
     try {
       const token = localStorage.getItem("accessToken");
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-      
-
-      const response = await axios.post(
+      const { data } = await axios.post(
         "http://127.0.0.1:8000/api/chats/",
         { publicacion: idPublicacion },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      navigate(`/chat/${data.id_chat}`);
+    } catch (err) {
+      console.error("Error al iniciar chat:", err);
+      alert("No se pudo iniciar el chat.");
+    }
+  };
 
-      // Redirigir al detalle del chat recién creado
-      navigate(`/chat/${response.data.id_chat}`);
-    } catch (error: any) {
-      console.error("❌ Error al crear chat:", error.response?.data || error.message);
-      alert("No se pudo iniciar el chat. Verifica que no seas el autor.");
+  const handleDelete = async (id: number) => {
+    try {
+      await eliminarPublicacion(id);
+      setPublicaciones((prev) => prev.filter((p) => p.id_publicacion !== id));
+    } catch (err) {
+      console.error("Error al eliminar publicación:", err);
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-purple-100">Publicaciones globales</h1>
-        <div className="flex gap-3">
-          <input
-            placeholder="Buscar..."
-            value={filtros.texto ?? ""}
-            onChange={(e) => setFiltros({ ...filtros, texto: e.target.value || undefined })}
-            className="px-3 py-2 rounded bg-slate-800/50 border border-slate-600/50 text-white text-sm"
-          />
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="px-3 py-2 bg-slate-700 text-white rounded-lg"
-            title="Filtros"
-          >
-            <i className="ri-filter-3-line"></i>
-          </button>
-        </div>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center mb-4">
+        
       </div>
 
-      {showFilters && <FiltersPanel filtros={filtros} onChange={setFiltros} />}
+      {publicaciones.length === 0 ? (
+        <p className="text-slate-400">No hay publicaciones aún.</p>
+      ) : (
+        publicaciones.map((p) => (
+          <div
+            key={p.id_publicacion}
+            className="bg-slate-800 p-4 rounded-lg border border-slate-700"
+          >
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-purple-100 font-semibold text-lg">{p.titulo}</h4>
+              <i className="ri-more-2-fill text-slate-400 text-xl" />
+            </div>
 
-      {loading && <p className="text-slate-300">Cargando...</p>}
-      {error && <p className="text-red-400">{error}</p>}
-      {!loading && items.length === 0 && (
-        <div className="px-4 py-3 rounded border border-slate-600 bg-slate-800/50 text-slate-300">
-          No se encontraron publicaciones.
-        </div>
+            <p className="text-slate-300 text-sm">{p.descripcion}</p>
+            <p className="text-slate-400 text-xs mt-2">
+              Habilidades buscadas: {p.habilidades_buscadas?.join(", ")}
+            </p>
+
+            <div className="flex flex-wrap gap-2 mt-4">
+              <button
+                className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+                onClick={() => iniciarChat(p.id_publicacion)}
+              >
+                Iniciar chat
+              </button>
+              <button
+                className="px-3 py-1 bg-yellow-600 text-white rounded hover:bg-yellow-700 text-sm"
+                onClick={() => console.log("Crear reporte para", p.id_publicacion)}
+              >
+                Crear reporte
+              </button>
+
+              {userId === p.estudiante && (
+                <>
+                  <button
+                    onClick={() => {
+                      setEditId(p.id_publicacion);
+                      setShowModal(true);
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDelete(p.id_publicacion)}
+                    className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+                  >
+                    Eliminar
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        ))
       )}
 
-      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items.map((p: Publication) => (
-          <li
-            key={p.id_publicacion}
-            className="rounded-xl p-4 bg-slate-800/50 border border-slate-700 flex flex-col justify-between"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-white">{p.titulo}</h3>
-                <p className="text-slate-300 text-sm mt-1">{p.descripcion}</p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {p.habilidades_buscadas.map((h, i) => (
-                    <span
-                      key={i}
-                      className="px-2 py-1 bg-purple-600/30 text-purple-200 rounded-full text-xs"
-                    >
-                      {h}
-                    </span>
-                  ))}
-                </div>
-
-                {/* 👉 Botón para iniciar chat */}
-                <button
-                  onClick={() => iniciarChat(p.id_publicacion)}
-                  className="mt-4 w-full px-4 py-2 bg-linear-to-r from-purple-600 to-primary text-white rounded-lg font-medium hover:from-primary hover:to-purple-600 transition-all"
-                >
-                  Iniciar Chat
-                </button>
-              </div>
-              <div className="text-right">
-                <p className="text-xs text-slate-400">
-                  {p.autor_alias ?? `Usuario ${p.estudiante}`}
-                </p>
-                <p className="text-xs text-slate-500">
-                  {new Date(p.fecha_creacion).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {showModal && (
+        <PublicationFormModal
+          idEdit={editId}
+          onClose={() => setShowModal(false)}
+          onSaved={fetchData}
+        />
+      )}
     </div>
   );
 };

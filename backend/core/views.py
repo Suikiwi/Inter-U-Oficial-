@@ -41,6 +41,22 @@ def test_reset_flow(request):
         })
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    
+    
+from rest_framework import generics, permissions
+from .models import Chat
+from .serializers import ChatSerializer
+
+class MisChatsView(generics.ListAPIView):
+    serializer_class = ChatSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Chat.objects.filter(participantes__estudiante=user).distinct().order_by("-fecha_inicio")
+
 
 # ----------- PUBLICACIONES VIEWS  -----------
 

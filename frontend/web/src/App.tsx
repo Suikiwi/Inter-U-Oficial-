@@ -48,9 +48,7 @@ function App() {
         <Route
           path="/reset-password-confirm/:uid/:token"
           element={
-            <Layout showHeader={false} showFooter={false} centerContent>
               <PasswordResetConfirm />
-            </Layout>
           }
         />
         <Route

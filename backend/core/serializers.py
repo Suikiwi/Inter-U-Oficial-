@@ -5,6 +5,7 @@ from .models import (
 )
 
 
+
 # ----------------------- PERFIL SERIALIZERS
 class PerfilCompletoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -128,3 +129,11 @@ class ModerarReporteSerializer(serializers.ModelSerializer):
             instance.estado = 1
         instance.save()
         return instance
+
+class ChatSerializer(serializers.ModelSerializer):
+    participantes = ChatParticipanteSerializer(many=True, read_only=True)
+    mensajes = MensajeSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Chat
+        fields = '__all__'

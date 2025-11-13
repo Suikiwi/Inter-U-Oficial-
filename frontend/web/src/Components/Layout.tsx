@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styles from "../Css/Login.module.css";
+import SidebarMenu from "../Components/Publications/SidebarMenu";
 
 interface LayoutProps {
   children: ReactNode;
@@ -21,7 +22,6 @@ export const Layout: React.FC<LayoutProps> = ({
     location.pathname.includes("/register") ||
     location.pathname.includes("/reset-password");
 
-  // Boolean para evitar falsy/truthy raros
   const token = !!localStorage.getItem("accessToken");
 
   return (
@@ -34,15 +34,13 @@ export const Layout: React.FC<LayoutProps> = ({
       {/* Header */}
       {showHeader && (
         <header className={`relative z-10 ${styles.glassEffect}`}>
-          <div className="max-w-7xl mx-auto px-4 py-4 border-b border-purple-500/20">
+          <div className="max-w-7xl mx-auto px-4 py-4 border-b border-purple-500/20 ml-24">
             <div className="flex items-center justify-between">
               <Link to="/" className="font-['Pacifico'] text-2xl text-primary font-bold">
                 Inter-U
               </Link>
 
-              {/* Navegación con íconos (Remix Icon) */}
               <nav className="flex gap-4 items-center">
-                {/* Feed (home) */}
                 <Link to="/publications" className="text-slate-300 hover:text-primary" title="Feed">
                   <i className="ri-home-4-line text-xl" />
                 </Link>
@@ -70,7 +68,6 @@ export const Layout: React.FC<LayoutProps> = ({
                   </>
                 )}
 
-                {/* En páginas de auth, muestra “Volver” como ícono si aplica */}
                 {isAuthPage && (
                   <Link to="/login" className="text-slate-300 hover:text-primary" title="Volver">
                     <i className="ri-arrow-go-back-line text-xl" />
@@ -82,15 +79,20 @@ export const Layout: React.FC<LayoutProps> = ({
         </header>
       )}
 
-      {/* Contenido */}
-      <main className={`flex-1 relative z-10 ${centerContent ? "flex items-center justify-center py-12 px-4" : ""}`}>
+      {/* Sidebar fijo */}
+      <SidebarMenu />
+
+      {/* Contenido principal con margen izquierdo */}
+      <main
+        className={`flex-1 relative z-10 ${centerContent ? "flex items-center justify-center py-12 px-4" : "ml-24 px-4 py-10"}`}
+      >
         {children}
       </main>
 
       {/* Footer */}
       {showFooter && (
         <footer className={`relative z-10 mt-auto ${styles.glassEffect}`}>
-          <div className="max-w-7xl mx-auto px-4 py-6 border-t border-purple-500/20">
+          <div className="max-w-7xl mx-auto px-4 py-6 border-t border-purple-500/20 ml-24">
             <div className="text-center text-sm text-slate-400">
               <p>© 2025 Inter-U. Todos los derechos reservados.</p>
               <div className="flex justify-center space-x-4 mt-2">

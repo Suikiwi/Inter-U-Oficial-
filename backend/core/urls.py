@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     # Publicaciones
-    PublicacionListCreateView, PublicacionDetailView,
+    MisChatsView, PublicacionListCreateView, PublicacionDetailView,
     PublicacionUpdateView, PublicacionDeleteView, MisPublicacionesView,
     # Chats y mensajes
     ChatListCreateView, ChatDetailView, CompletarIntercambioView, MensajeListCreateView,
@@ -13,6 +13,7 @@ from .views import (
     PerfilDetailView, CrearPerfilView, EliminarMiCuenta,
     # Reportes
     CrearReporteView, ListarReportesView, ModerarReporteView,
+    
 )
 
 urlpatterns = [
@@ -49,4 +50,7 @@ urlpatterns = [
     path('reportes/', CrearReporteView.as_view(), name='crear-reporte'),
     path('reportes/listar/', ListarReportesView.as_view(), name='listar-reportes'),
     path('reportes/<int:pk>/moderar/', ModerarReporteView.as_view(), name='moderar-reporte'),
+    
+    path('chats/mios/', MisChatsView.as_view(), name='mis-chats'),
+
 ]

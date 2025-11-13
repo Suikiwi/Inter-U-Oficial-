@@ -1,83 +1,121 @@
 import React, { useEffect, useState } from "react";
-import { obtenerMisPublicaciones, eliminarPublicacion } from "../../Services/publications";
+import { obtenerPublicacion, eliminarPublicacion } from "../../Services/publications";
+import PublicationFormModal from "./PublicationFormModal";
 import type { Publication } from "./Types";
+import axios from "axios";
 
-interface Props {
-  onEdit: (id: number) => void;
-  onRefresh?: () => void;
-}
-
-const MyPublicationsList: React.FC<Props> = ({ onEdit, onRefresh }) => {
+const MyPublicationsList: React.FC = () => {
   const [items, setItems] = useState<Publication[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [openForm, setOpenForm] = useState<{ open: boolean; editId?: number }>({ open: false });
 
-  const load = async () => {
+  const fetchMisPublicaciones = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await obtenerMisPublicaciones();
+      const token = localStorage.getItem("accessToken");
+      const { data } = await axios.get("http://127.0.0.1:8000/api/publicaciones/mias/", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setItems(data);
-    } catch (e: any) {
-      setError(e?.message ?? "Error al cargar tus publicaciones");
+    } catch (err: any) {
+      setError("No se pudieron cargar tus publicaciones.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    load();
+    fetchMisPublicaciones();
   }, []);
 
   const handleDelete = async (id: number) => {
+    if (!window.confirm("¿Seguro que deseas eliminar esta publicación?")) return;
     try {
       await eliminarPublicacion(id);
-      await load();
-      onRefresh?.();
-    } catch (e) {
-      console.error(e);
+      setItems((prev) => prev.filter((p) => p.id_publicacion !== id));
+      alert("✅ Publicación eliminada correctamente");
+    } catch (err) {
+      console.error("Error al eliminar publicación:", err);
+      alert("❌ No se pudo eliminar la publicación");
     }
   };
 
-  if (loading) return <p className="text-slate-300">Cargando mis publicaciones...</p>;
-  if (error) return <p className="text-red-400">{error}</p>;
+  const handleEdit = (id: number) => {
+    setOpenForm({ open: true, editId: id });
+  };
 
   return (
-    <ul className="space-y-4">
-      {items.map((p) => (
-        <li key={p.id_publicacion} className="rounded-xl p-4 bg-slate-800/50 border border-slate-700">
-          <div className="flex justify-between">
-            <div>
-              <h3 className="text-white font-semibold">{p.titulo}</h3>
-              <p className="text-slate-300 text-sm mt-1">{p.descripcion}</p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {p.habilidades_buscadas.map((h, i) => (
-                  <span key={i} className="px-2 py-1 bg-purple-600/30 text-purple-200 rounded-full text-xs">
-                    {h}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-slate-500">{new Date(p.fecha_creacion).toLocaleDateString()}</p>
-              <div className="flex gap-2 mt-2 justify-end">
-                <button onClick={() => onEdit(p.id_publicacion)} className="px-3 py-1 bg-slate-700 text-white rounded">
-                  Editar
-                </button>
-                <button onClick={() => handleDelete(p.id_publicacion)} className="px-3 py-1 bg-red-600 text-white rounded">
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          </div>
-        </li>
-      ))}
-      {items.length === 0 && (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-purple-100">Mis publicaciones</h1>
+
+      {loading && <p className="text-slate-300">Cargando...</p>}
+      {error && <p className="text-red-400">{error}</p>}
+      {!loading && items.length === 0 && (
         <div className="px-4 py-3 rounded border border-slate-600 bg-slate-800/50 text-slate-300">
-          Aún no tienes publicaciones.
+          No tienes publicaciones aún.
         </div>
       )}
-    </ul>
+
+      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {items.map((p) => (
+          <li
+            key={p.id_publicacion}
+            className="rounded-xl p-4 bg-slate-800/50 border border-slate-700 flex flex-col justify-between"
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-white">{p.titulo}</h3>
+                <p className="text-slate-300 text-sm mt-1">{p.descripcion}</p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {p.habilidades_buscadas.map((h, i) => (
+                    <span
+                      key={i}
+                      className="px-2 py-1 bg-purple-600/30 text-purple-200 rounded-full text-xs"
+                    >
+                      {h}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-slate-400">{p.autor_alias ?? `Usuario ${p.estudiante}`}</p>
+                <p className="text-xs text-slate-500">
+                  {new Date(p.fecha_creacion).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => handleEdit(p.id_publicacion)}
+                className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Editar
+              </button>
+              <button
+                onClick={() => handleDelete(p.id_publicacion)}
+                className="flex-1 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              >
+                Eliminar
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      {openForm.open && (
+        <PublicationFormModal
+          idEdit={openForm.editId}
+          onClose={() => setOpenForm({ open: false })}
+          onSaved={() => {
+            setOpenForm({ open: false });
+            fetchMisPublicaciones(); // refrescar lista después de guardar
+          }}
+        />
+      )}
+    </div>
   );
 };
 
