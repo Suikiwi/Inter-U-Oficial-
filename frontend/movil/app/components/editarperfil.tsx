@@ -97,18 +97,21 @@ export default function EditProfileModal({ isOpen, onClose, perfil, onSave }: Pr
             <TextInput
               style={styles.input}
               placeholder="Nombre"
+              placeholderTextColor="#bbb"
               value={formData.nombre}
               onChangeText={(text) => setFormData({ ...formData, nombre: text })}
             />
             <TextInput
               style={styles.input}
               placeholder="Apellido"
+              placeholderTextColor="#bbb"
               value={formData.apellido}
               onChangeText={(text) => setFormData({ ...formData, apellido: text })}
             />
             <TextInput
               style={styles.input}
               placeholder="Alias (público)"
+              placeholderTextColor="#bbb"
               value={formData.alias}
               onChangeText={(text) => setFormData({ ...formData, alias: text })}
             />
@@ -142,6 +145,7 @@ export default function EditProfileModal({ isOpen, onClose, perfil, onSave }: Pr
             <TextInput
               style={styles.input}
               placeholder="Biografía"
+              placeholderTextColor="#bbb"
               value={formData.biografia}
               onChangeText={(text) => setFormData({ ...formData, biografia: text })}
               multiline
@@ -149,12 +153,14 @@ export default function EditProfileModal({ isOpen, onClose, perfil, onSave }: Pr
             <TextInput
               style={styles.input}
               placeholder="URL de foto"
+              placeholderTextColor="#bbb"
               value={formData.foto}
               onChangeText={(text) => setFormData({ ...formData, foto: text })}
             />
             <TextInput
               style={styles.input}
               placeholder="Habilidades (separadas por coma)"
+              placeholderTextColor="#bbb"
               value={habilidadesText}
               onChangeText={setHabilidadesText}
               multiline

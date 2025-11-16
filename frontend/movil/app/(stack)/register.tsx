@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { 
-  View, Text, TextInput, TouchableOpacity, 
-  ActivityIndicator, StyleSheet 
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { registerUser } from "../api";
@@ -73,70 +80,81 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {alert && (
-        <View style={[
-          styles.alertBox,
-          alert.type === "error" ? styles.alertError : styles.alertSuccess
-        ]}>
-          <Text style={styles.alertText}>{alert.message}</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={80} // ajusta si tienes header/tab bar
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          {alert && (
+            <View
+              style={[
+                styles.alertBox,
+                alert.type === "error" ? styles.alertError : styles.alertSuccess,
+              ]}
+            >
+              <Text style={styles.alertText}>{alert.message}</Text>
+            </View>
+          )}
+
+          <Text style={styles.title}>Crear Cuenta</Text>
+          <Text style={styles.subtitle}>Únete a la comunidad académica</Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="usuario@inacapmail.cl"
+            placeholderTextColor="#bbb"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Contraseña"
+            placeholderTextColor="#bbb"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Repetir Contraseña"
+            placeholderTextColor="#bbb"
+            value={passwordConfirm}
+            onChangeText={setPasswordConfirm}
+            secureTextEntry
+          />
+
+          <TouchableOpacity
+            style={[styles.checkbox, aceptaPoliticas && styles.checkboxChecked]}
+            onPress={() => setAceptaPoliticas(!aceptaPoliticas)}
+          >
+            <Text style={styles.checkboxLabel}>
+              {aceptaPoliticas ? "✓ " : ""}Acepto las políticas de uso
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={handleRegister}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.registerButtonText}>Crear Cuenta</Text>
+            )}
+          </TouchableOpacity>
         </View>
-      )}
-
-      <Text style={styles.title}>Crear Cuenta</Text>
-      <Text style={styles.subtitle}>Únete a la comunidad académica</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="usuario@inacapmail.cl"
-        placeholderTextColor="#bbb"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        placeholderTextColor="#bbb"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Repetir Contraseña"
-        placeholderTextColor="#bbb"
-        value={passwordConfirm}
-        onChangeText={setPasswordConfirm}
-        secureTextEntry
-      />
-
-      <TouchableOpacity 
-        style={[styles.checkbox, aceptaPoliticas && styles.checkboxChecked]} 
-        onPress={() => setAceptaPoliticas(!aceptaPoliticas)}
-      >
-        <Text style={styles.checkboxLabel}>
-          {aceptaPoliticas ? "✓ " : ""}Acepto las políticas de uso
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity 
-        style={styles.registerButton} 
-        onPress={handleRegister} 
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.registerButtonText}>Crear Cuenta</Text>
-        )}
-      </TouchableOpacity>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContainer: { flexGrow: 1, justifyContent: "center" },
   container: { flex: 1, backgroundColor: "#1A0736", padding: 24, justifyContent: "center" },
   title: { fontSize: 28, fontWeight: "bold", color: "white", textAlign: "center", marginBottom: 8 },
   subtitle: { fontSize: 14, color: "#ccc", textAlign: "center", marginBottom: 20 },
@@ -161,10 +179,15 @@ const styles = StyleSheet.create({
   },
   checkboxChecked: { backgroundColor: "#3B1E70" },
   checkboxLabel: { color: "white", fontSize: 14 },
-  registerButton: { backgroundColor: "#6C63FF", paddingVertical: 14, borderRadius: 8, alignItems: "center" },
+  registerButton: {
+    backgroundColor: "#6C63FF",
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: "center",
+  },
   registerButtonText: { color: "white", fontSize: 16, fontWeight: "bold" },
   alertBox: { padding: 10, borderRadius: 8, marginBottom: 15 },
   alertError: { backgroundColor: "#FFCDD2" },
   alertSuccess: { backgroundColor: "#C8E6C9" },
-  alertText: { textAlign: "center", color: "#000" }
+  alertText: { textAlign: "center", color: "#000" },
 });

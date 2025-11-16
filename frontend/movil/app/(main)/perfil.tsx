@@ -3,21 +3,23 @@ import {
   View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Image, ScrollView 
 } from "react-native";
 import { useRouter } from "expo-router";
-import { getUserInfo, logoutUser } from "../api";
-import EditProfileModal from "../components/editarperfil"; // 👈 importa tu modal
+import { getPerfil, updatePerfil, logoutUser } from "../api";
+
+import EditProfileModal from "../components/editarperfil";
+import MisPublicaciones from "../components/mispublicaciones";
 
 export default function ProfileScreen() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showEditModal, setShowEditModal] = useState(false); // 👈 estado para abrir/cerrar modal
-  
+  const [showEditModal, setShowEditModal] = useState(false);
+
   const router = useRouter();
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const data = await getUserInfo();
+        const data = await getPerfil(); // 👈 trae datos completos del perfil
         setUser(data);
       } catch (err: any) {
         setError("Error al cargar el perfil");
@@ -34,10 +36,12 @@ export default function ProfileScreen() {
   };
 
   const handleUpdateProfile = async (data: Partial<any>) => {
-    // Aquí llamas a tu API para actualizar perfil
-    console.log("Datos actualizados:", data);
-    // Opcional: refrescar perfil
-    setUser({ ...user, ...data });
+    try {
+      const updatedUser = await updatePerfil(data); // 👈 guarda cambios en /perfil/
+      setUser(updatedUser);
+    } catch (error) {
+      console.error("Error al actualizar perfil:", error);
+    }
   };
 
   if (loading) {
@@ -59,13 +63,15 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView style={styles.container}>
+      {/* Encabezado */}
       <View style={styles.header}>
-        <Text style={styles.title}>Inter-U</Text>
+        <Text style={styles.title}>Perfil</Text>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutText}>Cerrar sesión</Text>
         </TouchableOpacity>
       </View>
 
+      {/* Tarjeta de perfil */}
       <View style={styles.profileCard}>
         {user?.foto ? (
           <Image source={{ uri: user.foto }} style={styles.avatar} />
@@ -81,7 +87,6 @@ export default function ProfileScreen() {
         <Text style={styles.carrera}>{user?.carrera || "Carrera no especificada"}</Text>
         <Text style={styles.email}>{user?.email}</Text>
 
-        {/* Botón para abrir modal */}
         <TouchableOpacity 
           onPress={() => setShowEditModal(true)} 
           style={styles.editButton}
@@ -90,17 +95,32 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* Información completa */}
       <View style={styles.infoCard}>
         <Text style={styles.sectionTitle}>Información completa</Text>
-        <Text style={styles.info}>📧 Email: {user?.email}</Text>
-        <Text style={styles.info}>🎓 Carrera: {user?.carrera}</Text>
-        <Text style={styles.info}>📚 Área: {user?.area}</Text>
+        <Text style={styles.info}>Email: {user?.email}</Text>
+        <Text style={styles.info}>Carrera: {user?.carrera}</Text>
+        <Text style={styles.info}>Área: {user?.area}</Text>
+        <Text style={styles.info}>Biografía: {user?.biografia}</Text>
         <Text style={styles.info}>
-          ✅ Tipo de usuario: {user?.is_admin_interu ? "Administrador" : "Estudiante"}
+          Tipo de usuario: {user?.is_admin_interu ? "Administrador" : "Estudiante"}
         </Text>
+
+        {/* 👇 Mostrar habilidades ofrecidas */}
+        {user?.habilidades_ofrecidas?.length > 0 && (
+          <View style={{ marginTop: 10 }}>
+            <Text style={styles.sectionTitle}>Habilidades ofrecidas</Text>
+            {user.habilidades_ofrecidas.map((h: string, index: number) => (
+              <Text key={index} style={styles.info}>• {h}</Text>
+            ))}
+          </View>
+        )}
       </View>
 
-      {/* Modal de edición */}
+      {/* 👇 Sección de publicaciones del usuario */}
+      <MisPublicaciones />
+
+      {/* Modal de edición de perfil */}
       <EditProfileModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
@@ -127,7 +147,7 @@ const styles = StyleSheet.create({
   name: { fontSize: 20, fontWeight: "bold", color: "#fff" },
   carrera: { fontSize: 16, color: "#ccc", marginBottom: 5 },
   email: { fontSize: 14, color: "#aaa" },
-  infoCard: { backgroundColor: "#2E2E48", padding: 15, borderRadius: 10 },
+  infoCard: { backgroundColor: "#2E2E48", padding: 15, borderRadius: 10, marginBottom: 20 },
   sectionTitle: { fontSize: 18, fontWeight: "bold", color: "#fff", marginBottom: 10 },
   info: { fontSize: 14, color: "#ccc", marginBottom: 5 },
   editButton: { backgroundColor: "#8A4FFF", padding: 12, borderRadius: 8, marginTop: 10 },

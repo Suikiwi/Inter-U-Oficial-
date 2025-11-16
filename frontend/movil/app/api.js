@@ -2,16 +2,15 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = 'http://10.191.173.235:8000/api'; // Reemplaza con tu IP local o dominio
+const BASE_URL = 'http://10.121.175.235:8000/api'; // Reemplaza con tu IP local o dominio
 
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
-  },
+  }
 });
 
-// Interceptor para añadir el token automáticamente en cada request
 api.interceptors.request.use(async (config) => {
   const token = await AsyncStorage.getItem('accessToken');
   if (token) {
@@ -65,6 +64,106 @@ export const refreshToken = async () => {
 export const logoutUser = async () => {
   await AsyncStorage.removeItem('accessToken');
   await AsyncStorage.removeItem('refreshToken');
+};
+
+// -------- PERFIL --------
+//
+export const getPerfil = async () => {
+  const { data } = await api.get("/perfil/");
+  return data;
+};
+
+export const updatePerfil = async (payload) => {
+  const { data } = await api.put("/perfil/", payload);
+  return data;
+};
+
+
+//
+// -------- PUBLICACIONES --------
+//
+export const getMisPublicaciones = async () => {
+  const { data } = await api.get("/publicaciones/mias/");
+  return data;
+};
+
+export const getPublicacionById = async (id) => {
+  const { data } = await api.get(`/publicaciones/${id}/`);
+  return data;
+};
+
+export const crearPublicacion = async (payload) => {
+  const { data } = await api.post("/publicaciones/", payload);
+  return data;
+};
+
+export const editarPublicacion = async (id, payload) => {
+  const { data } = await api.put(`/publicaciones/${id}/editar/`, payload);
+  return data;
+};
+
+export const eliminarPublicacion = async (id) => {
+  await api.delete(`/publicaciones/${id}/eliminar/`);
+};
+export const obtenerPublicacionesGlobal = async () => {
+  const { data } = await api.get("/publicaciones/");
+  return data;
+};
+
+//
+// -------- CHATS --------
+//
+export const iniciarChat = async (publicacionId) => {
+  const { data } = await api.post("/chats/", { publicacion: publicacionId });
+  return data;
+};
+
+export const getChatById = async (id) => {
+  const { data } = await api.get(`/chats/${id}/`);
+  return data;
+};
+
+export const completarIntercambio = async (id) => {
+  const { data } = await api.patch(`/chats/${id}/completar/`);
+  return data;
+};
+
+//
+// -------- MENSAJES --------
+//
+export const enviarMensaje = async (chatId, texto) => {
+  const { data } = await api.post("/mensajes/", { chat: chatId, texto });
+  return data;
+};
+
+//
+// -------- CALIFICACIONES --------
+//
+export const calificarChat = async (chatId, puntaje, comentario = "") => {
+  const { data } = await api.post("/calificaciones-chat/", {
+    chat: chatId,
+    puntaje,
+    comentario,
+  });
+  return data;
+};
+
+//
+// -------- NOTIFICACIONES --------
+//
+export const getNotificaciones = async () => {
+  const { data } = await api.get("/notificaciones/");
+  return data;
+};
+
+export const marcarNotificacionLeida = async (id) => {
+  const { data } = await api.patch(`/notificaciones/${id}/marcar-leida/`);
+  return data;
+};
+
+export const marcarTodasNotificacionesLeidas = async () => {
+  const { data } = await api.post("/notificaciones/marcar-todas-leidas/");
+  return data;
 };
 
 export default api;

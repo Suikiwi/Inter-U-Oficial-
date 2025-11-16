@@ -14,11 +14,18 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
+      <Stack
+        screenOptions={{
+          headerStyle: { backgroundColor: '#1A1A2E' }, // fondo del header
+          headerTintColor: '#fff',                     // color de texto y botones
+          headerTitleStyle: { fontWeight: 'bold' },    // estilo del título
+          headerTitle: 'Inter-U',         
+        }}
+      >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
     </ThemeProvider>
   );
 }
