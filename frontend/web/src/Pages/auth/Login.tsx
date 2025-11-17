@@ -1,9 +1,10 @@
 // src/pages/Login.tsx
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { Layout } from "../../Components/common/Layout";
 import styles from "../../css/Login.module.css";
+import ConsentModal from "../../Components/common/ConsentModal";
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 const DEBUG_MODE = false;
@@ -24,6 +25,20 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // Consentimiento
+  const [consentGiven, setConsentGiven] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem("interu_consent") === "accepted";
+    } catch {
+      return false;
+    }
+  });
+  const [consentModalVisible, setConsentModalVisible] = useState<boolean>(!consentGiven);
+
+  useEffect(() => {
+    setConsentModalVisible(!consentGiven);
+  }, [consentGiven]);
+
   const showAlert = (type: "error" | "success" | "info", message: string, details?: any) => {
     setAlert({ type, message, details });
     setTimeout(() => setAlert(null), 5000);
@@ -35,6 +50,7 @@ const Login: React.FC = () => {
     if (email.trim() && !email.trim().endsWith("@inacapmail.cl")) {
       errors.push("Debe usar un correo institucional @inacapmail.cl");
     }
+    if (!consentGiven) errors.push("Debe aceptar el consentimiento informado antes de iniciar sesión.");
     return errors;
   };
 
@@ -86,90 +102,104 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Layout centerContent={true}>
-      <div className={`max-w-md w-full ${styles.fadeInUp}`}>
-        {alert && (
-          <div className={`mb-4 px-4 py-3 rounded-lg border text-sm backdrop-blur-md ${
-            alert.type === "error" ? "bg-red-100 border-red-400 text-red-700" : "bg-green-100 border-green-400 text-green-700"
-          }`}>
-            <div className="font-medium">{alert.message}</div>
-          </div>
-        )}
+    <>
+      <ConsentModal
+        visible={consentModalVisible}
+        onAccept={() => {
+          setConsentGiven(true);
+          setConsentModalVisible(false);
+        }}
+        onDecline={() => {
+          // Mantener en la pantalla; opcional: redirigir a información / fuera
+          setConsentModalVisible(true);
+        }}
+      />
 
-        <div className="text-center mb-8">
-          <div className={styles.floatAnimation}>
-            <div className={`w-20 h-20 mx-auto mb-6 bg-linear-to-r from-primary to-purple-600 rounded-full flex items-center justify-center ${styles.glowAnimation}`}>
-              <i className="ri-login-box-line text-white text-2xl"></i>
+      <Layout centerContent={true}>
+        <div className={`max-w-md w-full ${styles.fadeInUp}`}>
+          {alert && (
+            <div className={`mb-4 px-4 py-3 rounded-lg border text-sm backdrop-blur-md ${
+              alert.type === "error" ? "bg-red-100 border-red-400 text-red-700" : "bg-green-100 border-green-400 text-green-700"
+            }`}>
+              <div className="font-medium">{alert.message}</div>
             </div>
-          </div>
-          <h2 className="text-3xl font-bold mb-2 bg-linear-to-r from-white to-slate-300 bg-clip-text text-transparent">
-            ¡Bienvenido de nuevo!
-          </h2>
-          <p className="text-slate-400">Accede a tu universo académico</p>
-        </div>
+          )}
 
-        <form onSubmit={handleSubmit} className={`rounded-xl p-8 ${styles.glassEffect} ${styles.glowAnimation}`}>
-          <div className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">Correo Electrónico *</label>
-              <div className="relative">
-                <i className="ri-mail-line absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-sm text-white focus:border-purple-500 focus:outline-none"
-                  placeholder="usuario@inacapmail.cl"
-                  required
-                />
+          <div className="text-center mb-8">
+            <div className={styles.floatAnimation}>
+              <div className={`w-20 h-20 mx-auto mb-6 bg-linear-to-r from-primary to-purple-600 rounded-full flex items-center justify-center ${styles.glowAnimation}`}>
+                <i className="ri-login-box-line text-white text-2xl"></i>
               </div>
             </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">Contraseña *</label>
-              <div className="relative">
-                <i className="ri-lock-line absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-sm text-white focus:border-purple-500 focus:outline-none"
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="text-right">
-              <Link to="/reset-password" className="text-sm text-primary hover:text-purple-400 transition-colors">
-                ¿Olvidaste tu contraseña?
-              </Link>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full bg-linear-to-r from-primary to-purple-600 text-white py-3 rounded-lg font-medium hover:from-purple-600 hover:to-primary transition-all disabled:opacity-50 ${styles.glowAnimation}`}
-            >
-              <span className="flex items-center justify-center space-x-2">
-                <span>{loading ? "Iniciando sesión..." : "Iniciar Sesión"}</span>
-                {loading && <i className="ri-loader-4-line animate-spin"></i>}
-              </span>
-            </button>
+            <h2 className="text-3xl font-bold mb-2 bg-linear-to-r from-white to-slate-300 bg-clip-text text-transparent">
+              ¡Bienvenido de nuevo!
+            </h2>
+            <p className="text-slate-400">Accede a tu universo académico</p>
           </div>
-        </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-slate-400">¿No tienes una cuenta?</p>
-          <Link to="/register" className="inline-flex items-center space-x-2 text-primary hover:text-purple-400 font-medium transition-all duration-300 mt-2">
-            <span>Regístrate aquí</span>
-            <i className="ri-external-link-line text-xs"></i>
-          </Link>
+          <form onSubmit={handleSubmit} className={`rounded-xl p-8 ${styles.glassEffect} ${styles.glowAnimation}`}>
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">Correo Electrónico *</label>
+                <div className="relative">
+                  <i className="ri-mail-line absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-sm text-white focus:border-purple-500 focus:outline-none"
+                    placeholder="usuario@inacapmail.cl"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">Contraseña *</label>
+                <div className="relative">
+                  <i className="ri-lock-line absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-sm text-white focus:border-purple-500 focus:outline-none"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="text-right">
+                <Link to="/reset-password" className="text-sm text-primary hover:text-purple-400 transition-colors">
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading || !consentGiven}
+                className={`w-full ${!consentGiven ? "opacity-60 cursor-not-allowed" : ""} bg-linear-to-r from-primary to-purple-600 text-white py-3 rounded-lg font-medium hover:from-purple-600 hover:to-primary transition-all disabled:opacity-50 ${styles.glowAnimation}`}
+              >
+                <span className="flex items-center justify-center space-x-2">
+                  <span>{loading ? "Iniciando sesión..." : "Iniciar Sesión"}</span>
+                  {loading && <i className="ri-loader-4-line animate-spin"></i>}
+                </span>
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-slate-400">¿No tienes una cuenta?</p>
+            <Link to="/register" className="inline-flex items-center space-x-2 text-primary hover:text-purple-400 font-medium transition-all duration-300 mt-2">
+              <span>Regístrate aquí</span>
+              <i className="ri-external-link-line text-xs"></i>
+            </Link>
+          </div>
         </div>
-      </div>
-    </Layout>
+      </Layout>
+    </>
   );
 };
 
