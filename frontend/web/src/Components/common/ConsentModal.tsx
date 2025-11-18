@@ -1,5 +1,5 @@
-// src/components/ConsentModal.tsx
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 type Props = {
   visible: boolean;
@@ -9,10 +9,27 @@ type Props = {
 
 const ConsentModal: React.FC<Props> = ({ visible, onAccept, onDecline }) => {
   const [checked, setChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!visible) setChecked(false);
   }, [visible]);
+
+  const registrarConsentimiento = async () => {
+    if (!checked) return;
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("accessToken");
+      await axios.post("http://127.0.0.1:8000/consentimiento/registrar/", {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      onAccept();
+    } catch (error) {
+      console.error("Error al registrar consentimiento:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!visible) return null;
 
@@ -59,17 +76,15 @@ const ConsentModal: React.FC<Props> = ({ visible, onAccept, onDecline }) => {
 
           <button
             type="button"
-            onClick={() => {
-              if (!checked) return;
-              try {
-                localStorage.setItem("interu_consent", "accepted");
-              } catch {}
-              onAccept();
-            }}
-            disabled={!checked}
-            className={`px-4 py-2 rounded-md text-sm text-white ${checked ? "bg-linear-to-r from-primary to-purple-600 hover:from-purple-600 hover:to-primary" : "bg-slate-700 opacity-60 cursor-not-allowed"}`}
+            onClick={registrarConsentimiento}
+            disabled={!checked || loading}
+            className={`px-4 py-2 rounded-md text-sm text-white ${
+              checked
+                ? "bg-linear-to-r from-primary to-purple-600 hover:from-purple-600 hover:to-primary"
+                : "bg-slate-700 opacity-60 cursor-not-allowed"
+            }`}
           >
-            Aceptar y continuar
+            {loading ? "Registrando..." : "Aceptar y continuar"}
           </button>
         </div>
       </div>

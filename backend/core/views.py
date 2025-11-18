@@ -3,13 +3,14 @@ from rest_framework import generics, permissions, status, serializers
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
+import requests
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
 
 from .models import (
     ChatParticipante, Publicacion, CalificacionChat,
-    Mensaje, Reporte, Perfil, Notificacion, Chat
+    Mensaje, Reporte, Perfil, Notificacion, Chat, Consentimiento
 )
 from .serializers import (
     ModerarReporteSerializer, PerfilCompletoSerializer,
@@ -423,3 +424,19 @@ class ModerarReporteView(generics.UpdateAPIView):
     permission_classes = [permissions.IsAdminUser]
 
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def verificar_consentimiento(request):
+    user = request.user
+    existe = Consentimiento.objects.filter(estudiante=user, aceptado=True).exists()
+    return Response({ "consentimiento_aceptado": existe })
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def registrar_consentimiento(request):
+    user = request.user
+    Consentimiento.objects.update_or_create(
+        estudiante=user,
+        defaults={ "aceptado": True }
+    )
+    return Response({ "status": "registrado" })

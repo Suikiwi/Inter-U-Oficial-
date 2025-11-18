@@ -14,6 +14,8 @@ from .views import (
     PerfilDetailView, CrearPerfilView, EliminarMiCuenta,
     # Reportes
     CrearReporteView, ListarReportesView, ModerarReporteView, 
+    # Consentimiento
+    verificar_consentimiento ,registrar_consentimiento
     
 )
 
@@ -55,5 +57,8 @@ urlpatterns = [
     path('reportes/<int:pk>/moderar/', ModerarReporteView.as_view(), name='moderar-reporte'),
     
     path('chats/mios/', MisChatsView.as_view(), name='mis-chats'),
+    # Consentimineto
+    path("consentimiento/verificar/", verificar_consentimiento),
+    path("consentimiento/registrar/", registrar_consentimiento),
 
 ]

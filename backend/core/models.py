@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth import get_user_model
 import uuid
 import secrets
 
@@ -113,3 +114,13 @@ class Reporte(models.Model):
     administrador = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='reportes_moderados')
     estudiante = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reportes')
     publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE)
+
+User = get_user_model()
+
+class Consentimiento(models.Model):
+    estudiante = models.ForeignKey(User, on_delete=models.CASCADE, related_name="consentimientos")
+    aceptado = models.BooleanField(default=False)
+    fecha_aceptacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Consentimiento de {self.estudiante.email} - {'Aceptado' if self.aceptado else 'No aceptado'}"

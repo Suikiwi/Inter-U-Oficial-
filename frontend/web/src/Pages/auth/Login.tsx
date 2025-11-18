@@ -1,5 +1,4 @@
-// src/pages/Login.tsx
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { Layout } from "../../Components/common/Layout";
@@ -16,41 +15,35 @@ const log = (...args: any[]) => {
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState<{ 
-    type: "error" | "success" | "info"; 
-    message: string; 
-    details?: any 
+  const [alert, setAlert] = useState<{
+    type: "error" | "success" | "info";
+    message: string;
+    details?: any;
   } | null>(null);
-  
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   // Consentimiento
-  const [consentGiven, setConsentGiven] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem("interu_consent") === "accepted";
-    } catch {
-      return false;
-    }
-  });
-  const [consentModalVisible, setConsentModalVisible] = useState<boolean>(!consentGiven);
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [consentModalVisible, setConsentModalVisible] = useState(false);
 
-  useEffect(() => {
-    setConsentModalVisible(!consentGiven);
-  }, [consentGiven]);
-
-  const showAlert = (type: "error" | "success" | "info", message: string, details?: any) => {
+  const showAlert = (
+    type: "error" | "success" | "info",
+    message: string,
+    details?: any
+  ) => {
     setAlert({ type, message, details });
     setTimeout(() => setAlert(null), 5000);
   };
 
   const validateForm = (): string[] => {
     const errors: string[] = [];
-    if (!email.trim() || !password.trim()) errors.push("Debe completar todos los campos.");
+    if (!email.trim() || !password.trim())
+      errors.push("Debe completar todos los campos.");
     if (email.trim() && !email.trim().endsWith("@inacapmail.cl")) {
       errors.push("Debe usar un correo institucional @inacapmail.cl");
     }
-    if (!consentGiven) errors.push("Debe aceptar el consentimiento informado antes de iniciar sesión.");
     return errors;
   };
 
@@ -77,19 +70,30 @@ const Login: React.FC = () => {
 
       log("Login exitoso! Token recibido");
 
-      localStorage.setItem("accessToken", response.data.access);
+      const accessToken = response.data.access;
+      localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", response.data.refresh);
-      
-      showAlert("success", "Login exitoso! Redirigiendo...");
-      
-      setTimeout(() => {
-        navigate("/profile", { replace: true });
-      }, 2000);
 
+      // Verificar consentimiento en backend
+      const consentResp = await axios.get(
+        `${API_BASE_URL}/consentimiento/verificar/`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (consentResp.data.consentimiento_aceptado) {
+        showAlert("success", "Login exitoso! Redirigiendo...");
+        setTimeout(() => {
+          navigate("/profile", { replace: true });
+        }, 2000);
+      } else {
+        setConsentModalVisible(true);
+      }
     } catch (error: any) {
       log(" Error en login:", error.response?.data || error.message);
-      
-      if (error.code === 'ERR_NETWORK') {
+
+      if (error.code === "ERR_NETWORK") {
         showAlert("error", "No se pudo conectar con el backend");
       } else if (error.response?.status === 401) {
         showAlert("error", "Credenciales inválidas");
@@ -108,9 +112,12 @@ const Login: React.FC = () => {
         onAccept={() => {
           setConsentGiven(true);
           setConsentModalVisible(false);
+          showAlert("success", "Consentimiento registrado. Redirigiendo...");
+          setTimeout(() => {
+            navigate("/profile", { replace: true });
+          }, 1500);
         }}
         onDecline={() => {
-          // Mantener en la pantalla; opcional: redirigir a información / fuera
           setConsentModalVisible(true);
         }}
       />
@@ -118,16 +125,22 @@ const Login: React.FC = () => {
       <Layout centerContent={true}>
         <div className={`max-w-md w-full ${styles.fadeInUp}`}>
           {alert && (
-            <div className={`mb-4 px-4 py-3 rounded-lg border text-sm backdrop-blur-md ${
-              alert.type === "error" ? "bg-red-100 border-red-400 text-red-700" : "bg-green-100 border-green-400 text-green-700"
-            }`}>
+            <div
+              className={`mb-4 px-4 py-3 rounded-lg border text-sm backdrop-blur-md ${
+                alert.type === "error"
+                  ? "bg-red-100 border-red-400 text-red-700"
+                  : "bg-green-100 border-green-400 text-green-700"
+              }`}
+            >
               <div className="font-medium">{alert.message}</div>
             </div>
           )}
 
           <div className="text-center mb-8">
             <div className={styles.floatAnimation}>
-              <div className={`w-20 h-20 mx-auto mb-6 bg-linear-to-r from-primary to-purple-600 rounded-full flex items-center justify-center ${styles.glowAnimation}`}>
+              <div
+                className={`w-20 h-20 mx-auto mb-6 bg-linear-to-r from-primary to-purple-600 rounded-full flex items-center justify-center ${styles.glowAnimation}`}
+              >
                 <i className="ri-login-box-line text-white text-2xl"></i>
               </div>
             </div>
@@ -137,10 +150,18 @@ const Login: React.FC = () => {
             <p className="text-slate-400">Accede a tu universo académico</p>
           </div>
 
-          <form onSubmit={handleSubmit} className={`rounded-xl p-8 ${styles.glassEffect} ${styles.glowAnimation}`}>
+          <form
+            onSubmit={handleSubmit}
+            className={`rounded-xl p-8 ${styles.glassEffect} ${styles.glowAnimation}`}
+          >
             <div className="space-y-6">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">Correo Electrónico *</label>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-slate-300 mb-2"
+                >
+                  Correo Electrónico *
+                </label>
                 <div className="relative">
                   <i className="ri-mail-line absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
                   <input
@@ -156,7 +177,12 @@ const Login: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">Contraseña *</label>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-slate-300 mb-2"
+                >
+                  Contraseña *
+                </label>
                 <div className="relative">
                   <i className="ri-lock-line absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
                   <input
@@ -172,15 +198,18 @@ const Login: React.FC = () => {
               </div>
 
               <div className="text-right">
-                <Link to="/reset-password" className="text-sm text-primary hover:text-purple-400 transition-colors">
+                <Link
+                  to="/reset-password"
+                  className="text-sm text-primary hover:text-purple-400 transition-colors"
+                >
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
 
               <button
                 type="submit"
-                disabled={loading || !consentGiven}
-                className={`w-full ${!consentGiven ? "opacity-60 cursor-not-allowed" : ""} bg-linear-to-r from-primary to-purple-600 text-white py-3 rounded-lg font-medium hover:from-purple-600 hover:to-primary transition-all disabled:opacity-50 ${styles.glowAnimation}`}
+                disabled={loading}
+                className={`w-full bg-linear-to-r from-primary to-purple-600 text-white py-3 rounded-lg font-medium hover:from-purple-600 hover:to-primary transition-all disabled:opacity-50 ${styles.glowAnimation}`}
               >
                 <span className="flex items-center justify-center space-x-2">
                   <span>{loading ? "Iniciando sesión..." : "Iniciar Sesión"}</span>
@@ -192,7 +221,10 @@ const Login: React.FC = () => {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-slate-400">¿No tienes una cuenta?</p>
-            <Link to="/register" className="inline-flex items-center space-x-2 text-primary hover:text-purple-400 font-medium transition-all duration-300 mt-2">
+            <Link
+              to="/register"
+              className="inline-flex items-center space-x-2 text-primary hover:text-purple-400 font-medium transition-all duration-300 mt-2"
+            >
               <span>Regístrate aquí</span>
               <i className="ri-external-link-line text-xs"></i>
             </Link>
