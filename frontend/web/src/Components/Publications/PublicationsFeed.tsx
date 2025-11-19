@@ -5,7 +5,7 @@ import type { Publication } from "../../Components/Publications/Types";
 import PublicationFormModal from "./PublicationFormModal";
 import { useNavigate } from "react-router-dom";
 import { getUserIdFromAccessToken } from "../../Services/auth";
-import { CrearReporteVisual } from "../reportes/CrearReporteVisual";
+import CrearReporte from "../reportes/CrearReporte"; // ✅ usar el funcional
 
 const API_BASE_URL = "http://127.0.0.1:8000"; // sin /api
 const PUBLICACIONES_ENDPOINT = `${API_BASE_URL}/publicaciones/`;
@@ -84,7 +84,8 @@ const PublicationsFeed: React.FC = () => {
                       Iniciar chat
                     </button>
 
-                    <CrearReporteVisual context={{ publicacionId: p.id_publicacion }} />
+                    {/*  ahora usa el componente funcional */}
+                    <CrearReporte context={{ publicacionId: p.id_publicacion }} />
                   </>
                 )}
 

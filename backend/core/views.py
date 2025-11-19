@@ -50,13 +50,7 @@ def test_reset_flow(request):
     
 from rest_framework import generics, permissions
 
-class MisChatsView(generics.ListAPIView):
-    serializer_class = ChatSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        user = self.request.user
-        return Chat.objects.filter(participantes__estudiante=user).distinct().order_by("-fecha_inicio")
 
 
 # ----------- PUBLICACIONES VIEWS  -----------
@@ -117,7 +111,14 @@ def crear_notificacion(usuario, tipo, mensaje, chat=None, publicacion=None, cali
         publicacion=publicacion,
         calificacion=calificacion
     )
+class MisChatsView(generics.ListAPIView):
+    serializer_class = ChatSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        user = self.request.user
+        return Chat.objects.filter(participantes__estudiante=user).distinct().order_by("-fecha_inicio")
+    
 class ChatListCreateView(generics.ListCreateAPIView):
     queryset = Chat.objects.all().order_by('-fecha_inicio')
     serializer_class = ChatSerializer
