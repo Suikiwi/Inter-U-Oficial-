@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, MessagesSquare, Bell, ShieldAlert } from "lucide-react";
-import { isAdminFromToken } from  "../../Services/auth";
-import NotificacionesVisual from "../notificaciones/NotificacionesVisual";
+import { isAdminFromToken } from "../../Services/auth";
+import Notificaciones from "../notificaciones/Notificaciones"; 
 import HistorialChat from "../chat/HistorialChat";
 
 const SidebarMenu: React.FC = () => {
@@ -61,7 +61,7 @@ const SidebarMenu: React.FC = () => {
       {/* Panel flotante de notificaciones */}
       {mostrarNotificaciones && (
         <div className="fixed top-[72px] left-24 z-40 w-[300px] max-h-[80vh] overflow-y-auto bg-slate-900/80 border border-slate-700 rounded-xl p-4 shadow-xl">
-          <NotificacionesVisual />
+          <Notificaciones /> 
         </div>
       )}
     </>

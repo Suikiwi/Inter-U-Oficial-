@@ -338,12 +338,6 @@ class MarcarTodasNotificacionesLeidasView(generics.CreateAPIView):
             estudiante=request.user, leida=False
         ).update(leida=True)
 
-        if actualizadas == 0:
-            # Usamos el formato estándar DRF para errores globales
-            raise serializers.ValidationError(
-                {"non_field_errors": ["No había notificaciones pendientes por leer."]}
-            )
-
         return Response(
             {"detalle": f"{actualizadas} notificaciones marcadas como leídas."},
             status=200

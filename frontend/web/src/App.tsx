@@ -10,7 +10,7 @@ import PublicationsPage from "./Pages/publications/PublicationsPage";
 import ChatPage from "./Pages/chats/ChatPage";
 import HistorialChat from "./Components/chat/HistorialChat";
 import ModerarReportesVisual from "./Components/reportes/ModerarReportesVisual";
-import NotificacionesVisual from "./Components/notificaciones/NotificacionesVisual";
+import Notificaciones from "./Components/notificaciones/Notificaciones"; 
 import { Layout } from "./Components/common/Layout";
 import { RequireUserOnly } from "./Components/common/RequireUserOnly";
 import "./css/index.css";
@@ -102,7 +102,7 @@ function App() {
             <RequireAuth>
               <RequireUserOnly>
                 <Layout>
-                  <NotificacionesVisual />
+                  <Notificaciones /> 
                 </Layout>
               </RequireUserOnly>
             </RequireAuth>
