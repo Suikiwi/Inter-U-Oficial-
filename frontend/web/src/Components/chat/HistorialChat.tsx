@@ -1,78 +1,98 @@
 import React, { useEffect, useState } from "react";
-import { obtenerMisChats } from "../../services/chats";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-interface Chat {
+interface ChatResumen {
   id_chat: number;
+  titulo: string;
   estado_intercambio: boolean;
-  participantes: string[];
-  mensajes: any[];
-  fecha_inicio: string;
-  publicacion?: {
-    id_publicacion: number;
-    titulo: string;
-  };
 }
 
+const API_BASE_URL = "http://127.0.0.1:8000";
+
 const HistorialChat: React.FC = () => {
-  const [chats, setChats] = useState<Chat[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [chats, setChats] = useState<ChatResumen[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchChats = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No hay token de acceso");
+
+      const response = await axios.get(`${API_BASE_URL}/chats/mios/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setChats(response.data);
+    } catch (error: any) {
+      console.error("Error al cargar chats:", error);
+
+      if (error.response?.status === 401) {
+        const refresh = localStorage.getItem("refreshToken");
+        if (refresh) {
+          try {
+            const refreshResponse = await axios.post(
+              `${API_BASE_URL}/auth/jwt/refresh/`,
+              { refresh }
+            );
+            const newAccess = refreshResponse.data.access;
+            localStorage.setItem("accessToken", newAccess);
+
+            const retryResponse = await axios.get(`${API_BASE_URL}/chats/mios/`, {
+              headers: { Authorization: `Bearer ${newAccess}` },
+            });
+            setChats(retryResponse.data);
+          } catch (refreshError) {
+            console.error("Error al refrescar token:", refreshError);
+          }
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchChats = async () => {
-      try {
-        const data = await obtenerMisChats();
-        console.log("Respuesta del backend:", data); // ✅ confirma que es un array
-        setChats(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error("Error al cargar chats:", err);
-      } finally {
-        setLoading(false);
-      }
+    let mounted = true;
+    if (mounted) fetchChats();
+    return () => {
+      mounted = false;
     };
-    fetchChats();
   }, []);
 
-  const renderChatCard = (chat: Chat) => (
-    <div
-      key={chat.id_chat}
-      className="bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-md"
-    >
-      <h2 className="text-purple-100 font-semibold text-lg mb-2">
-        {chat.publicacion?.titulo ?? "Sin título"}
-      </h2>
-      <p className="text-slate-300 text-sm mb-1">
-        <strong>Estado:</strong> {chat.estado_intercambio ? "Activo" : "Inactivo"}
-      </p>
-      <p className="text-slate-300 text-sm mb-1">
-        <strong>Participantes:</strong> {chat.participantes?.join(", ") ?? "Desconocidos"}
-      </p>
-      <p className="text-slate-400 text-xs mb-4">
-        <strong>Último mensaje:</strong>{" "}
-        {chat.mensajes?.length > 0 ? chat.mensajes[chat.mensajes.length - 1].contenido : "Sin mensajes"}
-      </p>
-      <button
-        onClick={() => navigate(`/chat/${chat.id_chat}`)}
-        className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 text-sm"
-      >
-        Ir al chat
-      </button>
-    </div>
-  );
-
   return (
-    <div className="max-w-5xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold text-white mb-6 text-center">Historial de Chats</h1>
+    <div>
+      <h3 className="text-purple-200 font-bold mb-3">Historial de chats</h3>
 
       {loading ? (
-        <p className="text-slate-400 text-center">Cargando chats...</p>
+        <div className="text-slate-400 text-sm">Cargando chats...</div>
       ) : chats.length === 0 ? (
-        <p className="text-slate-400 text-center">No tienes chats iniciados ni recibidos.</p>
+        <div className="text-slate-400 text-sm">No hay chats disponibles.</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {chats.map(renderChatCard)}
-        </div>
+        <ul className="space-y-2">
+          {chats.map((c) => (
+            <li
+              key={c.id_chat}
+              className="flex items-center justify-between text-slate-300"
+            >
+              <div>
+                <div className="font-medium">{c.titulo}</div>
+                <div className="text-xs text-slate-400 italic">
+                  {c.estado_intercambio
+                    ? `✅ Finalizado — ${c.titulo}`
+                    : `⏳ En curso — ${c.titulo}`}
+                </div>
+              </div>
+              <button
+                className="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 text-xs"
+                onClick={() => navigate(`/chat/${c.id_chat}`)}
+              >
+                Abrir
+              </button>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

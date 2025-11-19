@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { eliminarPublicacion } from "../../services/publications";
+import { eliminarPublicacion } from "../../Services/publications";
 import PublicationFormModal from "./PublicationFormModal";
-import type { Publication } from "../../Components/publications/Types";
+import type { Publication } from "../../Components/Publications/Types";
 import axios from "axios";
 
 const MyPublicationsList: React.FC = () => {
@@ -48,7 +48,6 @@ const MyPublicationsList: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-purple-100">Mis publicaciones</h1>
 
       {loading && <p className="text-slate-300">Cargando...</p>}
       {error && <p className="text-red-400">{error}</p>}

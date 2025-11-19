@@ -36,7 +36,7 @@ const Register: React.FC = () => {
     setAlert(null);
 
     try {
-      await axios.post(`${API_BASE_URL}/api/auth/users/`, {
+      await axios.post(`${API_BASE_URL}/auth/users/`, {
         email,
         password,
         acepta_politicas: acepta,

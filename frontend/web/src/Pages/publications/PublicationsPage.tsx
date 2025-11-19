@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import PublicationFormModal from "../../Components/publications/PublicationFormModal";
-import PublicationsFeed from "../../Components/publications/PublicationsFeed";
+import PublicationsFeed from "../../Components/Publications/PublicationsFeed";
 import { Layout } from "../../Components/common/Layout";
-import SidebarMenu from "../../Components/publications/SidebarMenu";
+import SidebarMenu from "../../Components/Publications/SidebarMenu";
 
 const PublicationsPage: React.FC = () => {
   const [openForm, setOpenForm] = useState(false);

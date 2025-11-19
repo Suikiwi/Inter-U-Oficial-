@@ -16,6 +16,7 @@ export interface PerfilData {
 }
 
 export interface UserData {
+  id: number;   
   email: string;
   acepta_politicas: boolean;
   is_estudiante: boolean;
@@ -44,7 +45,7 @@ export const useProfile = () => {
       setPerfil(perfilRes.data);
 
  
-      const userRes = await axios.get(`${API_BASE_URL}/api/auth/users/me/`, { headers });
+      const userRes = await axios.get(`${API_BASE_URL}/auth/users/me/`, { headers });
       setUser(userRes.data);
     } catch (err: any) {
       setError(err.response?.data?.detail || "Error al cargar el perfil");

@@ -2,12 +2,12 @@ from django import views
 from django.urls import path
 from .views import (
     # Publicaciones
-    MisChatsView, PublicacionListCreateView, PublicacionDetailView,
+    PublicacionListCreateView, PublicacionDetailView,
     PublicacionUpdateView, PublicacionDeleteView, MisPublicacionesView,
     # Chats y mensajes
-    ChatListCreateView, ChatDetailView, CompletarIntercambioView, MensajeListCreateView,
+    ChatListCreateView, ChatDetailView, CompletarIntercambioView, MensajeListCreateView, MisChatsView,
     # Calificaciones
-    CalificacionChatCreateView,
+    CalificacionChatCreateView, CalificacionesRecibidasView,
     # Notificaciones
     NotificacionListView, MarcarNotificacionLeidaView, MarcarTodasNotificacionesLeidasView,
     # Perfil
@@ -39,12 +39,15 @@ urlpatterns = [
     path('chats/', ChatListCreateView.as_view(), name='chat-list-create'),
     path('chats/<int:pk>/', ChatDetailView.as_view(), name='chat-detail'),
     path('chats/<int:pk>/completar/', CompletarIntercambioView.as_view(), name='chat-completar'),
+    path("chats/mios/", MisChatsView.as_view(), name="mis-chats"),
 
     # Mensajes
     path('mensajes/', MensajeListCreateView.as_view(), name='mensaje-list-create'),
 
     # Calificaciones
     path('calificaciones-chat/', CalificacionChatCreateView.as_view(), name='calificacion-chat'),
+    path("perfil/<int:pk>/calificaciones/", CalificacionesRecibidasView.as_view(), name="calificaciones-recibidas"),
+
 
     # Notificaciones
     path('notificaciones/', NotificacionListView.as_view(), name='notificacion-list'),
@@ -56,7 +59,6 @@ urlpatterns = [
     path('reportes/listar/', ListarReportesView.as_view(), name='listar-reportes'),
     path('reportes/<int:pk>/moderar/', ModerarReporteView.as_view(), name='moderar-reporte'),
     
-    path('chats/mios/', MisChatsView.as_view(), name='mis-chats'),
     # Consentimineto
     path("consentimiento/verificar/", verificar_consentimiento),
     path("consentimiento/registrar/", registrar_consentimiento),

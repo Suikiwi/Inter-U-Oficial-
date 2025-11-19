@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { activarCuenta } from "../../services/auth";
+import { activarCuenta } from "../../Services/auth";
 
 
 

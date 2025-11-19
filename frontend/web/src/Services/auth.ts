@@ -3,7 +3,7 @@ import axios from "axios";
 const API_BASE_URL = "http://127.0.0.1:8000";
 
 export const activarCuenta = async (uid: string, token: string) => {
-  return axios.post(`${API_BASE_URL}/api/auth/users/activation/`, {
+  return axios.post(`${API_BASE_URL}/auth/users/activation/`, {
     uid,
     token,
   }, {

@@ -47,6 +47,7 @@ class Chat(models.Model):
     fecha_inicio = models.DateTimeField(auto_now_add=True)
     estado_intercambio = models.BooleanField(default=False)
     publicacion = models.ForeignKey('core.Publicacion', on_delete=models.CASCADE, related_name='chats')
+    titulo = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return f"Chat {self.id_chat}"

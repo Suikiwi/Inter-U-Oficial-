@@ -1,10 +1,10 @@
 // src/Components/publications/PublicationsFeed.tsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import type { Publication } from "../../Components/publications/Types";
+import type { Publication } from "../../Components/Publications/Types";
 import PublicationFormModal from "./PublicationFormModal";
 import { useNavigate } from "react-router-dom";
-import { getUserIdFromAccessToken } from "../../services/auth";
+import { getUserIdFromAccessToken } from "../../Services/auth";
 import { CrearReporteVisual } from "../reportes/CrearReporteVisual";
 
 const API_BASE_URL = "http://127.0.0.1:8000"; // sin /api

@@ -52,7 +52,7 @@ const Login: React.FC = () => {
     setLoading(true);
     setAlert(null);
 
-    log(" Iniciando login...", { email, password: password ? "***" : "" });
+    log("Iniciando login...", { email, password: password ? "***" : "" });
 
     const errors = validateForm();
     if (errors.length > 0) {
@@ -62,8 +62,9 @@ const Login: React.FC = () => {
     }
 
     try {
+      // 🔑 Ruta correcta según tu urls.py
       const response = await axios.post(
-        `${API_BASE_URL}/api/auth/jwt/create/`,
+        `${API_BASE_URL}/auth/jwt/create/`,
         { email, password },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -91,7 +92,7 @@ const Login: React.FC = () => {
         setConsentModalVisible(true);
       }
     } catch (error: any) {
-      log(" Error en login:", error.response?.data || error.message);
+      log("Error en login:", error.response?.data || error.message);
 
       if (error.code === "ERR_NETWORK") {
         showAlert("error", "No se pudo conectar con el backend");

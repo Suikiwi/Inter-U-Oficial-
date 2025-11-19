@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, MessagesSquare, Bell, ShieldAlert } from "lucide-react";
-import { isAdminFromToken } from  "../../services/auth";
+import { isAdminFromToken } from  "../../Services/auth";
 import NotificacionesVisual from "../notificaciones/NotificacionesVisual";
 import HistorialChat from "../chat/HistorialChat";
 

@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useProfile } from "../../hooks/useProfile";
-import type { PerfilData } from "../../hooks/useProfile";
+import { useProfile } from "../../Hooks/useProfile";
+import type { PerfilData } from "../../Hooks/useProfile";
 import EditProfileModal from "../../Components/profile/EditProfileModal";
 import DeleteAccountModal from "../../Components/profile/DeleteAccountModal";
 import styles from "../../css/Profile.module.css";
-import MyPublicationsList from "../../Components/publications/MyPublicationsList";
-import PublicationFormModal from "../../Components/publications/PublicationFormModal";
+import MyPublicationsList from "../../Components/Publications/MyPublicationsList";
+import PublicationFormModal from "../../Components/Publications/PublicationFormModal";
+import axios from "axios";
+
+interface Calificacion {
+  id_calificacion: number;
+  puntaje: number;
+  comentario: string;
+  fecha: string;
+}
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
@@ -16,11 +24,29 @@ const Profile: React.FC = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [alert, setAlert] = useState<{ type: "error" | "success" | "info"; message: string } | null>(null);
+  const [calificaciones, setCalificaciones] = useState<Calificacion[]>([]);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (!token) navigate("/login", { replace: true });
   }, [navigate]);
+
+  useEffect(() => {
+    const fetchCalificaciones = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (!user?.id) return;
+        const res = await axios.get(`http://127.0.0.1:8000/perfil/${user.id}/calificaciones/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setCalificaciones(res.data);
+      } catch (err) {
+        console.error("Error al cargar calificaciones:", err);
+      }
+    };
+
+    fetchCalificaciones();
+  }, [user?.id]);
 
   const showAlert = (type: "error" | "success" | "info", message: string) => {
     setAlert({ type, message });
@@ -108,6 +134,8 @@ const Profile: React.FC = () => {
             className={`px-6 py-3 rounded-lg border text-sm backdrop-blur-md ${
               alert.type === "error"
                 ? "bg-red-100 border-red-400 text-red-700"
+                : alert.type === "info"
+                ? "bg-blue-100 border-blue-400 text-blue-700"
                 : "bg-green-100 border-green-400 text-green-700"
             }`}
           >
@@ -208,6 +236,7 @@ const Profile: React.FC = () => {
 
             {/* Contenido principal */}
             <section className="lg:col-span-2 space-y-8">
+              {/* Biografía */}
               <div className={`rounded-xl p-8 ${styles.glassEffect} ${styles.glowAnimation}`}>
                 <h2 className="text-2xl font-bold text-purple-100 mb-4">Bienvenido a tu Perfil</h2>
                 <p className="text-slate-300 leading-relaxed">
@@ -216,6 +245,30 @@ const Profile: React.FC = () => {
                 </p>
               </div>
 
+              {/* Calificaciones recibidas */}
+              <div className={`rounded-xl p-8 ${styles.glassEffect}`}>
+                <h3 className="text-xl font-semibold text-purple-100 mb-6">Calificaciones recibidas</h3>
+                {calificaciones.length === 0 ? (
+                  <p className="text-slate-400 text-sm">Aún no has recibido calificaciones.</p>
+                ) : (
+                  <ul className="space-y-4">
+                    {calificaciones.map((c) => (
+                      <li key={c.id_calificacion} className="text-slate-300 text-sm border-b border-slate-700 pb-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          {Array.from({ length: c.puntaje }).map((_, i) => (
+                            <span key={i}>⭐</span>
+                          ))}
+                          <span className="text-xs text-slate-400 ml-2">
+                            {new Date(c.fecha).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {/* Información Completa */}
               <div className={`rounded-xl p-8 ${styles.glassEffect}`}>
                 <h3 className="text-xl font-semibold text-purple-100 mb-6">Información Completa</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -252,20 +305,20 @@ const Profile: React.FC = () => {
                 </div>
               </div>
 
-              {/* Mis publicaciones con botón de creación */}
+              {/* Mis publicaciones + botón de creación */}
               <div className={`rounded-xl p-8 ${styles.glassEffect}`}>
                 <div className="flex justify-between items-center mb-6">
-                 
-                </div>
-
-                <MyPublicationsList />
-                 <button
+                  <h3 className="text-xl font-semibold text-purple-100">Mis publicaciones</h3>
+                  <button
                     onClick={() => setShowCreateModal(true)}
                     className="w-10 h-10 flex items-center justify-center bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-all"
                     title="Crear publicación"
                   >
                     <i className="ri-add-line text-2xl" />
                   </button>
+                </div>
+
+                <MyPublicationsList />
 
                 {showCreateModal && (
                   <PublicationFormModal

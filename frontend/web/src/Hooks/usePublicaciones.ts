@@ -1,6 +1,6 @@
 import axios from "axios";
-import { getUserIdFromAccessToken } from "../services/auth";
-import type { FiltersPublication } from "../Components/publications/Types";
+import { getUserIdFromAccessToken } from "../Services/auth";
+import type { FiltersPublication } from "../Components/Publications/Types";
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 

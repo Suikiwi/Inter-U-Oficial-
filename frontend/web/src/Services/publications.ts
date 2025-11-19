@@ -1,6 +1,6 @@
 import axios from "axios";
-import { getUserIdFromAccessToken } from "../services/auth";
-import type { FiltersPublication } from "../Components/publications/Types";
+import { getUserIdFromAccessToken } from "../Services/auth";
+import type { FiltersPublication } from "../Components/Publications/Types";
 
 
 const API_BASE = "http://127.0.0.1:8000/publicaciones/";
@@ -59,6 +59,6 @@ export const eliminarPublicacion = async (id: number) => {
 
 export async function listarPublicaciones(filters: FiltersPublication) {
   const params = new URLSearchParams(filters as any).toString();
-  const res = await axios.get(`/api/publications/?${params}`);
+  const res = await axios.get(`/publications/?${params}`);
   return res.data;
 }

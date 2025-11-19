@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import HistorialPanel from "../../Components/chat/HistorialPanel";
-import EstadoIntercambioVisual from "../../Components/chat/EstadoIntercambioVisual";
-import { CrearReporteVisual } from "../../Components/reportes/CrearReporteVisual";
+import axios from "axios";
+import EstadoIntercambio from "../../Components/chat/EstadoIntercambio";
 
 interface Mensaje {
   id?: number;
@@ -11,18 +10,65 @@ interface Mensaje {
   fecha?: string;
 }
 
+interface ChatInfo {
+  id_chat: number;
+  estado_intercambio: boolean;
+}
+
+const API_BASE_URL = "http://127.0.0.1:8000";
+
 const ChatPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [mensajes, setMensajes] = useState<Mensaje[]>([
-    { user: "Estudiante A", message: "Hola, ¿quieres colaborar en React?" },
-    { user: "Yo", message: "Sí, me interesa mucho." },
-    { user: "Estudiante A", message: "Perfecto, te envío detalles." },
-  ]);
+  const [mensajes, setMensajes] = useState<Mensaje[]>([]);
   const [nuevoMensaje, setNuevoMensaje] = useState("");
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [chatInfo, setChatInfo] = useState<ChatInfo | null>(null);
+
+  useEffect(() => {
+    // Obtener info del chat (estado_intercambio)
+    const fetchChatInfo = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const response = await axios.get(`${API_BASE_URL}/chats/${id}/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setChatInfo(response.data);
+      } catch (error) {
+        console.error("Error al cargar info del chat:", error);
+      }
+    };
+
+    fetchChatInfo();
+  }, [id]);
+
+  useEffect(() => {
+    const ws = new WebSocket(`ws://127.0.0.1:8001/ws/chat/${id}/`);
+
+    ws.onopen = () => {
+      console.log("Conectado al WebSocket");
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setMensajes((prev) => [...prev, data]);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket cerrado");
+    };
+
+    setSocket(ws);
+
+    return () => {
+      ws.close();
+    };
+  }, [id]);
 
   const enviarMensaje = () => {
-    if (nuevoMensaje.trim() !== "") {
-      setMensajes((prev) => [...prev, { user: "Yo", message: nuevoMensaje }]);
+    if (nuevoMensaje.trim() !== "" && socket) {
+      const msg = { user: "Yo", message: nuevoMensaje };
+      socket.send(JSON.stringify(msg));
+      setMensajes((prev) => [...prev, msg]);
       setNuevoMensaje("");
     }
   };
@@ -31,7 +77,7 @@ const ChatPage: React.FC = () => {
     <div className="max-w-4xl mx-auto py-10 px-4 space-y-6">
       <h1 className="text-2xl font-bold text-purple-100">Chat #{id}</h1>
 
-      {/* Lista de mensajes ficticios */}
+      {/* Lista de mensajes */}
       <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 h-[60vh] overflow-y-auto space-y-3">
         {mensajes.map((m, i) => (
           <div
@@ -69,10 +115,13 @@ const ChatPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Paneles visuales adicionales */}
-      <HistorialPanel />
-      <EstadoIntercambioVisual />
-      <CrearReporteVisual context={{ chatId: Number(id) }} />
+      {/* Estado del intercambio */}
+      {chatInfo && (
+        <EstadoIntercambio
+          chatId={chatInfo.id_chat}
+          estadoInicial={chatInfo.estado_intercambio}
+        />
+      )}
     </div>
   );
 };
