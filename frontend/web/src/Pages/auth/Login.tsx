@@ -6,7 +6,7 @@ import styles from "../../css/Login.module.css";
 import ConsentModal from "../../Components/common/ConsentModal";
 
 const API_BASE_URL = "http://127.0.0.1:8000";
-const DEBUG_MODE = false;
+const DEBUG_MODE = true;
 
 const log = (...args: any[]) => {
   if (DEBUG_MODE) console.log("[Login Debug]:", ...args);
@@ -14,6 +14,7 @@ const log = (...args: any[]) => {
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<{
     type: "error" | "success" | "info";
@@ -24,8 +25,6 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Consentimiento
-  const [consentGiven, setConsentGiven] = useState(false);
   const [consentModalVisible, setConsentModalVisible] = useState(false);
 
   const showAlert = (
@@ -62,41 +61,41 @@ const Login: React.FC = () => {
     }
 
     try {
-      // 🔑 Ruta correcta según tu urls.py
       const response = await axios.post(
-        `${API_BASE_URL}/auth/jwt/create/`,
+        `${API_BASE_URL}/auth/login/`,
         { email, password },
         { headers: { "Content-Type": "application/json" } }
       );
 
-      log("Login exitoso! Token recibido");
+      const accessToken: string = response.data.access;
+      const refreshToken: string = response.data.refresh;
 
-      const accessToken = response.data.access;
       localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", response.data.refresh);
+      localStorage.setItem("refreshToken", refreshToken);
 
-      // Verificar consentimiento en backend
+      const payload = JSON.parse(atob(accessToken.split(".")[1]));
+      const isAdmin = payload?.is_admin_interu === true;
+
       const consentResp = await axios.get(
         `${API_BASE_URL}/consentimiento/verificar/`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
+        { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
+      log("Consentimiento:", consentResp.data);
+      log("JWT payload:", payload);
+      log("is_admin_interu:", isAdmin);
+
       if (consentResp.data.consentimiento_aceptado) {
-        showAlert("success", "Login exitoso! Redirigiendo...");
-        setTimeout(() => {
-          navigate("/profile", { replace: true });
-        }, 2000);
+        navigate(isAdmin ? "/moderar-reportes" : "/profile", { replace: true });
       } else {
         setConsentModalVisible(true);
       }
     } catch (error: any) {
-      log("Error en login:", error.response?.data || error.message);
+      log("Error en login:", error?.response?.data ?? error?.message);
 
-      if (error.code === "ERR_NETWORK") {
+      if (error?.code === "ERR_NETWORK") {
         showAlert("error", "No se pudo conectar con el backend");
-      } else if (error.response?.status === 401) {
+      } else if (error?.response?.status === 401) {
         showAlert("error", "Credenciales inválidas");
       } else {
         showAlert("error", "Error de autenticación");
@@ -110,13 +109,28 @@ const Login: React.FC = () => {
     <>
       <ConsentModal
         visible={consentModalVisible}
-        onAccept={() => {
-          setConsentGiven(true);
-          setConsentModalVisible(false);
-          showAlert("success", "Consentimiento registrado. Redirigiendo...");
-          setTimeout(() => {
-            navigate("/profile", { replace: true });
-          }, 1500);
+        onAccept={async () => {
+          const token = localStorage.getItem("accessToken");
+          if (!token) {
+            showAlert("error", "Sesión no válida. Inicia sesión nuevamente.");
+            navigate("/login", { replace: true });
+            return;
+          }
+
+          try {
+            await axios.post(
+              `${API_BASE_URL}/consentimiento/aceptar/`,
+              {},
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setConsentModalVisible(false);
+
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            const isAdmin = payload?.is_admin_interu === true;
+            navigate(isAdmin ? "/moderar-reportes" : "/profile", { replace: true });
+          } catch {
+            showAlert("error", "No se pudo registrar el consentimiento.");
+          }
         }}
         onDecline={() => {
           setConsentModalVisible(true);
@@ -130,7 +144,9 @@ const Login: React.FC = () => {
               className={`mb-4 px-4 py-3 rounded-lg border text-sm backdrop-blur-md ${
                 alert.type === "error"
                   ? "bg-red-100 border-red-400 text-red-700"
-                  : "bg-green-100 border-green-400 text-green-700"
+                  : alert.type === "success"
+                  ? "bg-green-100 border-green-400 text-green-700"
+                  : "bg-blue-100 border-blue-400 text-blue-700"
               }`}
             >
               <div className="font-medium">{alert.message}</div>
@@ -138,14 +154,7 @@ const Login: React.FC = () => {
           )}
 
           <div className="text-center mb-8">
-            <div className={styles.floatAnimation}>
-              <div
-                className={`w-20 h-20 mx-auto mb-6 bg-linear-to-r from-primary to-purple-600 rounded-full flex items-center justify-center ${styles.glowAnimation}`}
-              >
-                <i className="ri-login-box-line text-white text-2xl"></i>
-              </div>
-            </div>
-            <h2 className="text-3xl font-bold mb-2 bg-linear-to-r from-white to-slate-300 bg-clip-text text-transparent">
+            <h2 className="text-3xl font-bold mb-2 text-white">
               ¡Bienvenido de nuevo!
             </h2>
             <p className="text-slate-400">Accede a tu universo académico</p>
@@ -157,77 +166,49 @@ const Login: React.FC = () => {
           >
             <div className="space-y-6">
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-slate-300 mb-2"
-                >
+                <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
                   Correo Electrónico *
                 </label>
-                <div className="relative">
-                  <i className="ri-mail-line absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                  <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-sm text-white focus:border-purple-500 focus:outline-none"
-                    placeholder="usuario@inacapmail.cl"
-                    required
-                  />
-                </div>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-3 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-sm text-white focus:border-purple-500 focus:outline-none"
+                  placeholder="usuario@inacapmail.cl"
+                  required
+                />
               </div>
 
               <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-slate-300 mb-2"
-                >
+                <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
                   Contraseña *
                 </label>
-                <div className="relative">
-                  <i className="ri-lock-line absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                  <input
-                    type="password"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-sm text-white focus:border-purple-500 focus:outline-none"
-                    placeholder="••••••••"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="text-right">
-                <Link
-                  to="/reset-password"
-                  className="text-sm text-primary hover:text-purple-400 transition-colors"
-                >
-                  ¿Olvidaste tu contraseña?
-                </Link>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-3 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-sm text-white focus:border-purple-500 focus:outline-none"
+                  placeholder="••••••••"
+                  required
+                />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full bg-linear-to-r from-primary to-purple-600 text-white py-3 rounded-lg font-medium hover:from-purple-600 hover:to-primary transition-all disabled:opacity-50 ${styles.glowAnimation}`}
+                className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition-all disabled:opacity-50"
               >
-                <span className="flex items-center justify-center space-x-2">
-                  <span>{loading ? "Iniciando sesión..." : "Iniciar Sesión"}</span>
-                  {loading && <i className="ri-loader-4-line animate-spin"></i>}
-                </span>
+                {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
               </button>
             </div>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-slate-400">¿No tienes una cuenta?</p>
-            <Link
-              to="/register"
-              className="inline-flex items-center space-x-2 text-primary hover:text-purple-400 font-medium transition-all duration-300 mt-2"
-            >
-              <span>Regístrate aquí</span>
-              <i className="ri-external-link-line text-xs"></i>
+            <Link to="/register" className="text-primary hover:text-purple-400 font-medium">
+              Regístrate aquí
             </Link>
           </div>
         </div>

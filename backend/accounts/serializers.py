@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 import logging
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
-
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
@@ -71,3 +71,13 @@ class LoggingPasswordResetConfirmSerializer(PasswordResetConfirmSerializer):
         self.user.save(update_fields=["password"])
         logger.info("Contraseña guardada exitosamente")
         return None
+    
+    
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # Agregamos tus flags personalizados
+        token["is_admin_interu"] = user.is_admin_interu
+        token["is_estudiante"] = user.is_estudiante
+        return token

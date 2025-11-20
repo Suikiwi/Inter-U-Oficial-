@@ -9,25 +9,24 @@ import ActivateAccount from "./Pages/auth/ActivateAccount";
 import PublicationsPage from "./Pages/publications/PublicationsPage";
 import ChatPage from "./Pages/chats/ChatPage";
 import HistorialChat from "./Components/chat/HistorialChat";
-import ModerarReportesVisual from "./Components/reportes/ModerarReportesVisual";
-import Notificaciones from "./Components/notificaciones/Notificaciones"; 
+import ModerarReportesPage from "./Pages/admin/ModerarReportesPage";
+import Notificaciones from "./Components/notificaciones/Notificaciones";
 import { Layout } from "./Components/common/Layout";
-import { RequireUserOnly } from "./Components/common/RequireUserOnly";
 import "./css/index.css";
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
-  const token = !!localStorage.getItem("accessToken");
-  return token ? <>{children}</> : <Navigate to="/login" replace />;
+  const hasToken = !!localStorage.getItem("accessToken");
+  return hasToken ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* 🔁 Redirección raíz al login */}
+        {/* Base */}
         <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* Páginas públicas */}
+        {/* Públicas */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
@@ -38,10 +37,7 @@ function App() {
             </Layout>
           }
         />
-        <Route
-          path="/reset-password-confirm/:uid/:token"
-          element={<PasswordResetConfirm />}
-        />
+        <Route path="/reset-password-confirm/:uid/:token" element={<PasswordResetConfirm />} />
         <Route
           path="/activate/:uid/:token"
           element={
@@ -51,14 +47,12 @@ function App() {
           }
         />
 
-        {/* Páginas protegidas solo para usuarios normales */}
+        {/* Protegidas por token (sin reevaluar rol) */}
         <Route
           path="/profile"
           element={
             <RequireAuth>
-              <RequireUserOnly>
-                <Profile />
-              </RequireUserOnly>
+              <Profile />
             </RequireAuth>
           }
         />
@@ -66,9 +60,7 @@ function App() {
           path="/publications"
           element={
             <RequireAuth>
-              <RequireUserOnly>
-                <PublicationsPage />
-              </RequireUserOnly>
+              <PublicationsPage />
             </RequireAuth>
           }
         />
@@ -76,11 +68,9 @@ function App() {
           path="/chat/:id"
           element={
             <RequireAuth>
-              <RequireUserOnly>
-                <Layout>
-                  <ChatPage />
-                </Layout>
-              </RequireUserOnly>
+              <Layout>
+                <ChatPage />
+              </Layout>
             </RequireAuth>
           }
         />
@@ -88,11 +78,9 @@ function App() {
           path="/historial-chat"
           element={
             <RequireAuth>
-              <RequireUserOnly>
-                <Layout>
-                  <HistorialChat />
-                </Layout>
-              </RequireUserOnly>
+              <Layout>
+                <HistorialChat />
+              </Layout>
             </RequireAuth>
           }
         />
@@ -100,21 +88,20 @@ function App() {
           path="/notificaciones"
           element={
             <RequireAuth>
-              <RequireUserOnly>
-                <Layout>
-                  <Notificaciones /> 
-                </Layout>
-              </RequireUserOnly>
+              <Layout>
+                <Notificaciones />
+              </Layout>
             </RequireAuth>
           }
         />
 
-        {/* Página exclusiva para admin */}
         <Route
           path="/moderar-reportes"
           element={
             <RequireAuth>
-              <ModerarReportesVisual />
+              <Layout>
+                <ModerarReportesPage />
+              </Layout>
             </RequireAuth>
           }
         />
