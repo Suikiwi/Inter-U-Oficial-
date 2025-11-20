@@ -204,38 +204,39 @@ class CompletarIntercambioView(generics.UpdateAPIView):
 # -----------------------MENSAJES -----------------------
 
 class MensajeListCreateView(generics.ListCreateAPIView):
-    queryset = Mensaje.objects.all().order_by('fecha')
     serializer_class = MensajeSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        chat_id = self.request.query_params.get("chat")
+        qs = Mensaje.objects.all().order_by("fecha")
+        if chat_id:
+            qs = qs.filter(chat_id=chat_id)
+        return qs
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         remitente = request.user
-        chat_id = request.data.get('chat')
+        chat_id = request.data.get("chat")
         if not chat_id:
-            raise serializers.ValidationError(
-                {"chat": ["Este campo es requerido."]}
-            )
+            raise serializers.ValidationError({"chat": ["Este campo es requerido."]})
 
         chat = get_object_or_404(Chat, pk=chat_id)
         if not ChatParticipante.objects.filter(chat=chat, estudiante=remitente).exists():
-            raise PermissionDenied(
-                {"chat": ["No eres participante de este chat."]}
-            )
+            raise PermissionDenied({"chat": ["No eres participante de este chat."]})
 
-        texto = request.data.get('texto')
+        texto = request.data.get("texto")
         if not texto:
-            raise serializers.ValidationError(
-                {"texto": ["Este campo es requerido."]}
-            )
+            raise serializers.ValidationError({"texto": ["Este campo es requerido."]})
 
         mensaje = Mensaje.objects.create(chat=chat, estudiante=remitente, texto=texto)
 
+        # Notificar a los otros participantes
         for otro in ChatParticipante.objects.filter(chat=chat).exclude(estudiante=remitente):
             crear_notificacion(
                 otro.estudiante,
-                'nuevo_mensaje',
-                f'Nuevo mensaje en el chat {chat.id_chat}',
+                "nuevo_mensaje",
+                f"Nuevo mensaje en el chat {chat.id_chat}",
                 chat
             )
 

@@ -5,9 +5,9 @@ import type { Publication } from "../../Components/Publications/Types";
 import PublicationFormModal from "./PublicationFormModal";
 import { useNavigate } from "react-router-dom";
 import { getUserIdFromAccessToken } from "../../Services/auth";
-import CrearReporte from "../reportes/CrearReporte"; // ✅ usar el funcional
+import CrearReporte from "../reportes/CrearReporte";
 
-const API_BASE_URL = "http://127.0.0.1:8000"; // sin /api
+const API_BASE_URL = "http://127.0.0.1:8000";
 const PUBLICACIONES_ENDPOINT = `${API_BASE_URL}/publicaciones/`;
 
 const PublicationsFeed: React.FC = () => {
@@ -67,6 +67,23 @@ const PublicationsFeed: React.FC = () => {
                 <h4 className="text-purple-100 font-semibold text-lg">{p.titulo}</h4>
               </div>
 
+              {/* Alias + fecha/hora */}
+              <p className="text-slate-400 text-xs mb-2">
+                Publicado por{" "}
+                <span className="font-medium text-purple-200">{p.autor_alias || "—"}</span>{" "}
+                el{" "}
+                {p.fecha_creacion
+                  ? new Date(p.fecha_creacion).toLocaleDateString()
+                  : "—"}{" "}
+                a las{" "}
+                {p.fecha_creacion
+                  ? new Date(p.fecha_creacion).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : ""}
+              </p>
+
               <p className="text-slate-300 text-sm">{p.descripcion}</p>
               <p className="text-slate-400 text-xs mt-2">
                 Habilidades buscadas: {p.habilidades_buscadas?.join(", ") || "—"}
@@ -84,7 +101,6 @@ const PublicationsFeed: React.FC = () => {
                       Iniciar chat
                     </button>
 
-                    {/*  ahora usa el componente funcional */}
                     <CrearReporte context={{ publicacionId: p.id_publicacion }} />
                   </>
                 )}

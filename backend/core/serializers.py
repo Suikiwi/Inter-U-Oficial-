@@ -79,10 +79,20 @@ class ChatParticipanteSerializer(serializers.ModelSerializer):
 
 
 class MensajeSerializer(serializers.ModelSerializer):
+    autor_alias = serializers.CharField(source="estudiante.alias", read_only=True)
+
     class Meta:
         model = Mensaje
-        fields = '__all__'
-        read_only_fields = ['id_mensaje', 'fecha', 'leido']
+        fields = [
+            "id_mensaje",
+            "chat",
+            "estudiante",
+            "texto",
+            "fecha",
+            "leido",
+            "autor_alias", 
+        ]
+        read_only_fields = ["id_mensaje", "fecha", "leido", "autor_alias"]
 
 
 class CalificacionChatSerializer(serializers.ModelSerializer):

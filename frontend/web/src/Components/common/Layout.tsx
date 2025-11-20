@@ -16,10 +16,6 @@ export const Layout: React.FC<LayoutProps> = ({
   centerContent = false,
 }) => {
   const location = useLocation();
-  const isAuthPage =
-    location.pathname.includes("/login") ||
-    location.pathname.includes("/register") ||
-    location.pathname.includes("/reset-password");
 
   const token = !!localStorage.getItem("accessToken");
 
@@ -30,7 +26,7 @@ export const Layout: React.FC<LayoutProps> = ({
       <div className="fixed top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse pointer-events-none" />
       <div className="fixed bottom-1/4 right-1/4 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl animate-pulse delay-1000 pointer-events-none" />
 
-      {/* Header */}
+      {/* Header solo con logo */}
       {showHeader && (
         <header className={`relative z-10 ${styles.glassEffect}`}>
           <div className="max-w-7xl mx-auto px-4 py-4 border-b border-purple-500/20">
@@ -38,41 +34,6 @@ export const Layout: React.FC<LayoutProps> = ({
               <Link to="/" className="font-['Pacifico'] text-2xl text-primary font-bold">
                 Inter-U
               </Link>
-
-              <nav className="flex gap-4 items-center">
-                <Link to="/publications" className="text-slate-300 hover:text-primary" title="Feed">
-                  <i className="ri-home-4-line text-xl" />
-                </Link>
-
-                {token ? (
-                  <>
-                    <Link to="/notifications" className="text-slate-300 hover:text-primary" title="Notificaciones">
-                      <i className="ri-notification-3-line text-xl" />
-                    </Link>
-                    <Link to="/messages" className="text-slate-300 hover:text-primary" title="Mensajes">
-                      <i className="ri-mail-line text-xl" />
-                    </Link>
-                    <Link to="/profile" className="text-slate-300 hover:text-primary" title="Perfil">
-                      <i className="ri-user-3-line text-xl" />
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/login" className="text-slate-300 hover:text-primary" title="Iniciar sesión">
-                      <i className="ri-login-box-line text-xl" />
-                    </Link>
-                    <Link to="/register" className="text-slate-300 hover:text-primary" title="Registrarse">
-                      <i className="ri-user-add-line text-xl" />
-                    </Link>
-                  </>
-                )}
-
-                {isAuthPage && (
-                  <Link to="/login" className="text-slate-300 hover:text-primary" title="Volver">
-                    <i className="ri-arrow-go-back-line text-xl" />
-                  </Link>
-                )}
-              </nav>
             </div>
           </div>
         </header>
