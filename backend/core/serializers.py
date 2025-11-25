@@ -122,12 +122,24 @@ class NotificacionSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id_notificacion', 'fecha']
 
+class PublicacionMiniSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Publicacion
+        fields = ["id", "titulo"]
+
+class PublicacionMiniSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Publicacion
+        fields = ["id_publicacion", "titulo"]
 
 class ReporteSerializer(serializers.ModelSerializer):
+    publicacion = PublicacionMiniSerializer(read_only=True)
+
     class Meta:
         model = Reporte
-        fields = '__all__'
-        read_only_fields = ['estudiante', 'fecha', 'estado']
+        fields = "__all__"
+        read_only_fields = ["estudiante", "fecha", "estado"]
+
 
 
 class ModerarReporteSerializer(serializers.ModelSerializer):

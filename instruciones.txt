@@ -17,9 +17,15 @@ User = get_user_model()
 
 User.objects.filter(email="alicia.norambuena@inacapmail.cl").delete()
 
+entorno virtual python -m venv venv
+ 
 pip install Django djangorestframework django-cors-headers django-csp djangorestframework-simplejwt djoser channels daphne python-dotenv Pillow
 npm install axios@1.13.2 lucide-react@0.553.0 react@19.2.0 react-dom@19.2.0 react-router-dom@7.9.6 socket.io-client@4.8.1
 npm install -D @eslint/js@9.39.1 @tailwindcss/postcss@4.1.17 @types/axios@0.9.36 @types/node@24.10.1 @types/react@19.2.4 @types/react-dom@19.2.3 @types/react-router-dom@5.3.3 @vitejs/plugin-react@5.1.1 autoprefixer@10.4.22 eslint@9.39.1 eslint-plugin-react-hooks@5.2.0 eslint-plugin-react-refresh@0.4.24 globals@16.5.0 postcss@8.5.6 tailwindcss@4.1.17 typescript@5.9.3 typescript-eslint@8.46.4 vite@6.4.1
+
+
+daphne interu_backend.asgi:application --port 8001
+
 
 
 por seguridad crear admins en la shell

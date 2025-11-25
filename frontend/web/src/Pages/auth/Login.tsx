@@ -119,7 +119,7 @@ const Login: React.FC = () => {
 
           try {
             await axios.post(
-              `${API_BASE_URL}/consentimiento/aceptar/`,
+              `${API_BASE_URL}/consentimiento/registrar/`,
               {},
               { headers: { Authorization: `Bearer ${token}` } }
             );
