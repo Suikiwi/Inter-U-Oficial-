@@ -122,9 +122,11 @@ const PublicationsFeed: React.FC = () => {
                 <p className="text-slate-400 text-xs mt-2">
                   Habilidades buscadas: {p.habilidades_buscadas?.join(", ") || "—"}
                 </p>
+                <p className="text-slate-400 text-xs mt-1">
+                  Habilidades ofrecidas: {p.habilidades_ofrecidas?.join(", ") || "—"}
+                </p>
 
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {/* Un usuario NO puede iniciar chat ni crear reporte sobre su propia publicación */}
                   {!isOwner && (
                     <>
                       <button
@@ -139,7 +141,6 @@ const PublicationsFeed: React.FC = () => {
                     </>
                   )}
 
-                  {/* El autor SÍ puede editar o eliminar su propia publicación */}
                   {isOwner && (
                     <>
                       <button
@@ -173,7 +174,7 @@ const PublicationsFeed: React.FC = () => {
             onClose={() => setShowModal(false)}
             onSaved={async () => {
               setShowModal(false);
-              await fetchPublicaciones(); // refrescar después de guardar
+              await fetchPublicaciones();
             }}
           />
         )}

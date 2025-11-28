@@ -4,16 +4,35 @@ from .models import (
     Mensaje, Reporte, Perfil, Notificacion
 )
 
-def crear_notificacion(usuario, mensaje, tipo="info"):
-    """
-    Crea una notificación asociada a un usuario.
-    """
-    from .models import Notificacion
+
+def crear_notificacion(usuario, tipo="info", mensaje=None, chat=None, publicacion=None, calificacion=None):
+    alias = getattr(usuario.perfil, "alias", None) or usuario.email
+    titulo_chat = chat.titulo if chat and hasattr(chat, "titulo") else f"chat {chat.id_chat}" if chat else "un chat"
+
+    # Si no se pasa mensaje, construirlo según el tipo
+    if mensaje is None:
+        if tipo == "nuevo_mensaje":
+            mensaje = f"Nuevo mensaje en el chat '{titulo_chat}'"
+        elif tipo == "intercambio_completado":
+            mensaje = f"El autor ha marcado el chat '{titulo_chat}' como completado"
+        elif tipo == "calificacion_chat":
+            mensaje = f"{alias} calificó el chat '{titulo_chat}'"
+        elif tipo == "nuevo_chat":
+            mensaje = f"Se ha iniciado un nuevo chat: '{titulo_chat}'"
+        else:
+            mensaje = f"{alias} realizó una acción en el chat '{titulo_chat}'"
+
     return Notificacion.objects.create(
         estudiante=usuario,
+        tipo=tipo,
         mensaje=mensaje,
-        tipo=tipo
+        chat=chat,
+        publicacion=publicacion,
+        calificacion=calificacion
     )
+
+
+
 
 
 # ----------------------- PERFIL SERIALIZERS
@@ -79,7 +98,7 @@ class ChatParticipanteSerializer(serializers.ModelSerializer):
 
 
 class MensajeSerializer(serializers.ModelSerializer):
-    autor_alias = serializers.CharField(source="estudiante.alias", read_only=True)
+    autor_alias = serializers.CharField(source="estudiante.perfil.alias", read_only=True)
 
     class Meta:
         model = Mensaje
@@ -133,7 +152,9 @@ class PublicacionMiniSerializer(serializers.ModelSerializer):
         fields = ["id_publicacion", "titulo"]
 
 class ReporteSerializer(serializers.ModelSerializer):
-    publicacion = PublicacionMiniSerializer(read_only=True)
+    publicacion = serializers.PrimaryKeyRelatedField(
+        queryset=Publicacion.objects.all()
+    )
 
     class Meta:
         model = Reporte
@@ -161,4 +182,8 @@ class ModerarReporteSerializer(serializers.ModelSerializer):
             instance.estado = 1
         instance.save()
         return instance
+    
+    
+    
+    
 

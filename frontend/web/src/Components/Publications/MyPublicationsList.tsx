@@ -1,121 +1,167 @@
 import React, { useEffect, useState } from "react";
-import { eliminarPublicacion } from "../../Services/publications";
-import PublicationFormModal from "./PublicationFormModal";
-import type { Publication } from "../../Components/Publications/Types";
+import {
+  Modal,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import axios from "axios";
 
-const MyPublicationsList: React.FC = () => {
-  const [items, setItems] = useState<Publication[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [openForm, setOpenForm] = useState<{ open: boolean; editId?: number }>({ open: false });
+type Props = {
+  idEdit: number | null;
+  onClose: () => void;
+  onSaved: () => void;
+};
 
-  const fetchMisPublicaciones = async () => {
+export default function EditarPublicacionModal({ idEdit, onClose, onSaved }: Props) {
+  const [titulo, setTitulo] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [habilidadesBuscadas, setHabilidadesBuscadas] = useState("");
+  const [habilidadesOfrecidas, setHabilidadesOfrecidas] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!idEdit) return;
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("accessToken"); // o AsyncStorage en móvil
+        const { data } = await axios.get(`http://127.0.0.1:8000/publicaciones/${idEdit}/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setTitulo(data.titulo || "");
+        setDescripcion(data.descripcion || "");
+        setHabilidadesBuscadas((data.habilidades_buscadas || []).join(", "));
+        setHabilidadesOfrecidas((data.habilidades_ofrecidas || []).join(", "));
+      } catch (err) {
+        console.error("Error al cargar publicación:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [idEdit]);
+
+  const handleSave = async () => {
+    if (!idEdit) return;
     try {
       setLoading(true);
-      setError(null);
-      const token = localStorage.getItem("accessToken");
-      const { data } = await axios.get("http://127.0.0.1:8000/publicaciones/mias/", {
+      const token = localStorage.getItem("accessToken"); // o AsyncStorage en móvil
+      const payload = {
+        titulo,
+        descripcion,
+        habilidades_buscadas: habilidadesBuscadas
+          .split(",")
+          .map((h) => h.trim())
+          .filter((h) => h.length > 0),
+        habilidades_ofrecidas: habilidadesOfrecidas
+          .split(",")
+          .map((h) => h.trim())
+          .filter((h) => h.length > 0),
+      };
+
+      // PATCH para actualización parcial
+      await axios.patch(`http://127.0.0.1:8000/publicaciones/${idEdit}/editar/`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setItems(data);
-    } catch (err: any) {
-      setError("No se pudieron cargar tus publicaciones.");
+
+      onSaved();
+    } catch (err) {
+      console.error("Error al editar publicación:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchMisPublicaciones();
-  }, []);
-
-  const handleDelete = async (id: number) => {
-    if (!window.confirm("¿Seguro que deseas eliminar esta publicación?")) return;
-    try {
-      await eliminarPublicacion(id);
-      setItems((prev) => prev.filter((p) => p.id_publicacion !== id));
-      alert("Publicación eliminada correctamente");
-    } catch (err) {
-      console.error("Error al eliminar publicación:", err);
-      alert("No se pudo eliminar la publicación");
-    }
-  };
-
-  const handleEdit = (id: number) => {
-    setOpenForm({ open: true, editId: id });
-  };
+  if (!idEdit) return null;
 
   return (
-    <div className="space-y-6">
+    <Modal visible={!!idEdit} animationType="slide" transparent>
+      <View style={styles.backdrop}>
+        <View style={styles.modal}>
+          <Text style={styles.title}>Editar publicación</Text>
+          <ScrollView>
+            <TextInput
+              style={styles.input}
+              placeholder="Título"
+              placeholderTextColor="#bbb"
+              value={titulo}
+              onChangeText={setTitulo}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Descripción"
+              placeholderTextColor="#bbb"
+              value={descripcion}
+              onChangeText={setDescripcion}
+              multiline
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Habilidades buscadas (separadas por coma)"
+              placeholderTextColor="#bbb"
+              value={habilidadesBuscadas}
+              onChangeText={setHabilidadesBuscadas}
+              multiline
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Habilidades ofrecidas (separadas por coma)"
+              placeholderTextColor="#bbb"
+              value={habilidadesOfrecidas}
+              onChangeText={setHabilidadesOfrecidas}
+              multiline
+            />
+          </ScrollView>
 
-      {loading && <p className="text-slate-300">Cargando...</p>}
-      {error && <p className="text-red-400">{error}</p>}
-      {!loading && items.length === 0 && (
-        <div className="px-4 py-3 rounded border border-slate-600 bg-slate-800/50 text-slate-300">
-          No tienes publicaciones aún.
-        </div>
-      )}
-
-      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items.map((p) => (
-          <li
-            key={p.id_publicacion}
-            className="rounded-xl p-4 bg-slate-800/50 border border-slate-700 flex flex-col justify-between"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-white">{p.titulo}</h3>
-                <p className="text-slate-300 text-sm mt-1">{p.descripcion}</p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {p.habilidades_buscadas.map((h, i) => (
-                    <span
-                      key={i}
-                      className="px-2 py-1 bg-purple-600/30 text-purple-200 rounded-full text-xs"
-                    >
-                      {h}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-xs text-slate-400">{p.autor_alias ?? `Usuario ${p.estudiante}`}</p>
-                <p className="text-xs text-slate-500">
-                  {new Date(p.fecha_creacion).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={() => handleEdit(p.id_publicacion)}
-                className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                Editar
-              </button>
-              <button
-                onClick={() => handleDelete(p.id_publicacion)}
-                className="flex-1 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-              >
-                Eliminar
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-
-      {openForm.open && (
-        <PublicationFormModal
-          idEdit={openForm.editId}
-          onClose={() => setOpenForm({ open: false })}
-          onSaved={() => {
-            setOpenForm({ open: false });
-            fetchMisPublicaciones(); // refrescar lista después de guardar
-          }}
-        />
-      )}
-    </div>
+          <View style={styles.actions}>
+            <TouchableOpacity style={styles.purpleButton} onPress={onClose}>
+              <Text style={styles.buttonText}>Cancelar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.purpleButton} onPress={handleSave} disabled={loading}>
+              {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Guardar</Text>}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
   );
-};
+}
 
-export default MyPublicationsList;
+const styles = StyleSheet.create({
+  backdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modal: {
+    backgroundColor: "#2E2E48",
+    borderRadius: 12,
+    padding: 20,
+    width: "90%",
+    height: "85%",
+  },
+  title: { fontSize: 20, fontWeight: "bold", color: "#fff", marginBottom: 15 },
+  input: {
+    backgroundColor: "#1A1A2E",
+    color: "#fff",
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  actions: { flexDirection: "row", justifyContent: "space-between", marginTop: 15 },
+  purpleButton: {
+    backgroundColor: "#8A4FFF",
+    padding: 12,
+    borderRadius: 8,
+    flex: 1,
+    marginHorizontal: 5,
+    alignItems: "center",
+  },
+  buttonText: { color: "#fff", fontWeight: "bold" },
+});

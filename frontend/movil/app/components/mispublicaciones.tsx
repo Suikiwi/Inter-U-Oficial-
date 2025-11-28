@@ -7,7 +7,7 @@ import EditarPublicacionModal from "./editarpublicacionmodal";
 export default function MisPublicaciones() {
   const [items, setItems] = useState<Publication[]>([]);
   const [loading, setLoading] = useState(false);
-  const [editId, setEditId] = useState<number | null>(null);
+  const [selectedPub, setSelectedPub] = useState<Publication | null>(null);
 
   const fetchMisPublicaciones = async () => {
     try {
@@ -32,9 +32,13 @@ export default function MisPublicaciones() {
         text: "Eliminar",
         style: "destructive",
         onPress: async () => {
-          await eliminarPublicacion(id);
-          setItems((prev) => prev.filter((p) => p.id_publicacion !== id));
-          Alert.alert("✅", "Publicación eliminada correctamente");
+          try {
+            await eliminarPublicacion(id);
+            setItems((prev) => prev.filter((p) => p.id_publicacion !== id));
+            Alert.alert( "Publicación eliminada correctamente");
+          } catch (e) {
+            Alert.alert("Error", "No se pudo eliminar la publicación.");
+          }
         },
       },
     ]);
@@ -42,7 +46,7 @@ export default function MisPublicaciones() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Mis Publicaciones</Text>
+      <Text style={styles.sectionTitle}>Mis publicaciones</Text>
 
       {loading && <ActivityIndicator color="#8A4FFF" />}
 
@@ -56,27 +60,30 @@ export default function MisPublicaciones() {
             <Text style={styles.titulo}>{item.titulo}</Text>
             <Text style={styles.descripcion}>{item.descripcion}</Text>
             <Text style={styles.habilidades}>
-              Habilidades: {item.habilidades_buscadas.join(", ")}
+              Habilidades buscadas: {item.habilidades_buscadas?.join(", ") || "—"}
+            </Text>
+            <Text style={styles.habilidades}>
+              Habilidades ofrecidas: {item.habilidades_ofrecidas?.join(", ") || "—"}
             </Text>
 
             <View style={styles.actions}>
-              <TouchableOpacity onPress={() => setEditId(item.id_publicacion)}>
-                <Text style={styles.edit}>Editar</Text>
+              <TouchableOpacity onPress={() => setSelectedPub(item)}>
+                <Text style={styles.actionText}>Editar</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => handleDelete(item.id_publicacion)}>
-                <Text style={styles.delete}> Eliminar</Text>
+                <Text style={styles.actionText}>Eliminar</Text>
               </TouchableOpacity>
             </View>
           </View>
         ))}
 
-      {editId !== null && (
+      {selectedPub && (
         <EditarPublicacionModal
-          idEdit={editId}
-          onClose={() => setEditId(null)}
-          onSaved={() => {
-            setEditId(null);
-            fetchMisPublicaciones();
+          publicacion={selectedPub}
+          onClose={() => setSelectedPub(null)}
+          onUpdated={async () => {
+            setSelectedPub(null);
+            await fetchMisPublicaciones();
           }}
         />
       )}
@@ -93,6 +100,5 @@ const styles = StyleSheet.create({
   descripcion: { fontSize: 14, color: "#ccc", marginTop: 5 },
   habilidades: { fontSize: 12, color: "#aaa", marginTop: 5 },
   actions: { flexDirection: "row", justifyContent: "space-between", marginTop: 10 },
-  edit: { color: "#4FC3F7", fontWeight: "bold" },
-  delete: { color: "#FF5252", fontWeight: "bold" },
+  actionText: { color: "#8A4FFF", fontWeight: "bold" },
 });

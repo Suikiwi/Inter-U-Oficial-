@@ -15,7 +15,7 @@ from .models import (
 from .serializers import (
     ModerarReporteSerializer, PerfilCompletoSerializer,
     PublicacionSerializer, ChatSerializer, MensajeSerializer,
-    NotificacionSerializer, ReporteSerializer, CalificacionChatSerializer
+    NotificacionSerializer, ReporteSerializer, CalificacionChatSerializer, crear_notificacion
 )
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -102,15 +102,6 @@ class PublicacionDeleteView(generics.DestroyAPIView):
 
 # ----------- CHAT Y MENSAJES -----------
 
-def crear_notificacion(usuario, tipo, mensaje, chat=None, publicacion=None, calificacion=None):
-    Notificacion.objects.create(
-        estudiante=usuario,
-        tipo=tipo,
-        mensaje=mensaje,
-        chat=chat,
-        publicacion=publicacion,
-        calificacion=calificacion
-    )
 class MisChatsView(generics.ListAPIView):
     serializer_class = ChatSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -146,12 +137,12 @@ class ChatListCreateView(generics.ListCreateAPIView):
         ChatParticipante.objects.get_or_create(chat=chat, estudiante=receptor, defaults={'rol': 'receptor'})
 
         crear_notificacion(
-            autor,
-            'nuevo_chat',
-            f'Nuevo chat sobre tu publicación {publicacion_id}',
-            chat,
-            publicacion
-        )
+        usuario=autor,
+        tipo='nuevo_chat',
+        chat=chat,
+        publicacion=publicacion
+)
+
         return Response(ChatSerializer(chat).data, status=201)
 
 
@@ -191,11 +182,12 @@ class CompletarIntercambioView(generics.UpdateAPIView):
         receptores = ChatParticipante.objects.filter(chat=chat).exclude(estudiante=estudiante)
         for receptor in receptores:
             crear_notificacion(
-                receptor.estudiante,
-                'intercambio_completado',
-                f'El autor ha marcado el chat {chat.pk} como completado.',
-                chat
-            )
+            usuario=otro.estudiante,
+            tipo='calificacion_chat',
+            chat=chat,
+            calificacion=calificacion
+)
+
 
         return Response(ChatSerializer(chat).data, status=200)
 
@@ -234,11 +226,11 @@ class MensajeListCreateView(generics.ListCreateAPIView):
         # Notificar a los otros participantes
         for otro in ChatParticipante.objects.filter(chat=chat).exclude(estudiante=remitente):
             crear_notificacion(
-                otro.estudiante,
-                "nuevo_mensaje",
-                f"Nuevo mensaje en el chat {chat.id_chat}",
-                chat
-            )
+            usuario=otro.estudiante,
+            tipo='nuevo_mensaje',
+            chat=chat
+)
+
 
         return Response(MensajeSerializer(mensaje).data, status=201)
 
@@ -282,12 +274,13 @@ class CalificacionChatCreateView(generics.CreateAPIView):
         )
 
         for otro in ChatParticipante.objects.filter(chat=chat).exclude(estudiante=evaluador):
-            crear_notificacion(
-                otro.estudiante,
-                'calificacion_chat',
-                f'El usuario {evaluador.pk} calificó el chat {chat.pk}.',
-                chat
-            )
+         crear_notificacion(
+    usuario=otro.estudiante,
+    tipo='calificacion_chat',
+    chat=chat,
+    calificacion=calificacion
+)
+
 
         return Response(CalificacionChatSerializer(calificacion).data, status=201)
     

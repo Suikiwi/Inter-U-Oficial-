@@ -30,18 +30,18 @@ export default function NuevaPublicacionScreen() {
 
       const payload = { titulo, descripcion, habilidades_buscadas, estudiante };
 
-      const nueva = await crearPublicacion(payload); // 👈 backend devuelve la publicación creada
+      const nueva = await crearPublicacion(payload); // backend devuelve la publicación creada
 
-      alert("✅ Publicación creada correctamente");
+      alert(" Publicación creada correctamente");
 
-      // 👇 Navegar de vuelta y pasar la nueva publicación
+      // Navegar de vuelta y pasar la nueva publicación
       router.push({
         pathname: "/feed", // o "/perfil" si quieres refrescar tus publicaciones
         params: { nuevaPublicacion: JSON.stringify(nueva) }
       });
     } catch (error) {
       console.error("Error al crear publicación:", error);
-      alert("❌ No se pudo crear la publicación");
+      alert("No se pudo crear la publicación");
     } finally {
       setSaving(false);
     }

@@ -168,10 +168,10 @@ export default function EditProfileModal({ isOpen, onClose, perfil, onSave }: Pr
           </ScrollView>
 
           <View style={styles.actions}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+            <TouchableOpacity style={styles.purpleButton} onPress={onClose}>
               <Text style={styles.buttonText}>Cancelar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={saving}>
+            <TouchableOpacity style={styles.purpleButton} onPress={handleSave} disabled={saving}>
               {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Guardar</Text>}
             </TouchableOpacity>
           </View>
@@ -210,20 +210,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   actions: { flexDirection: "row", justifyContent: "space-between", marginTop: 15 },
-  cancelButton: {
-    backgroundColor: "#FF5252",
-    padding: 12,
-    borderRadius: 8,
-    flex: 1,
-    marginRight: 5,
-    alignItems: "center",
-  },
-  saveButton: {
+  purpleButton: {
     backgroundColor: "#8A4FFF",
     padding: 12,
     borderRadius: 8,
     flex: 1,
-    marginLeft: 5,
+    marginHorizontal: 5,
     alignItems: "center",
   },
   buttonText: { color: "#fff", fontWeight: "bold" },

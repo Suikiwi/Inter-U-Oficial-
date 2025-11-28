@@ -81,3 +81,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token["is_admin_interu"] = user.is_admin_interu
         token["is_estudiante"] = user.is_estudiante
         return token
+    
+    
+    

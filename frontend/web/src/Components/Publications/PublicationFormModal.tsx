@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { crearPublicacion, editarPublicacion, obtenerPublicacion } from "../../services/publications";
-import type { Publication } from "../../Components/publications/Types";
+import type { Publication } from "../../Components/Publications/Types";
 import { useNavigate } from "react-router-dom";
 import { getUserIdFromAccessToken } from "../../services/auth";
 

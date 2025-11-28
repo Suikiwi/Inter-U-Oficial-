@@ -1,33 +1,52 @@
 import React, { useEffect, useState } from "react";
-import { 
-  View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Image, ScrollView 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  Image,
+  ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { getPerfil, updatePerfil, logoutUser } from "../api";
+import api, { getPerfil, updatePerfil, logoutUser } from "../api";
 
 import EditProfileModal from "../components/editarperfil";
 import MisPublicaciones from "../components/mispublicaciones";
+
+interface Calificacion {
+  id_calificacion: number;
+  puntaje: number;
+  comentario: string;
+  fecha: string;
+}
 
 export default function ProfileScreen() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [calificaciones, setCalificaciones] = useState<Calificacion[]>([]);
 
   const router = useRouter();
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchProfileAndRatings = async () => {
       try {
-        const data = await getPerfil(); // 👈 trae datos completos del perfil
+        const data = await getPerfil(); // PerfilCompletoSerializer
         setUser(data);
+
+        if (data?.id_perfil) {
+          const res = await api.get<Calificacion[]>(`/perfil/${data.id_perfil}/calificaciones/`);
+          setCalificaciones(res.data);
+        }
       } catch (err: any) {
         setError("Error al cargar el perfil");
       } finally {
         setLoading(false);
       }
     };
-    fetchProfile();
+    fetchProfileAndRatings();
   }, []);
 
   const handleLogout = async () => {
@@ -37,7 +56,7 @@ export default function ProfileScreen() {
 
   const handleUpdateProfile = async (data: Partial<any>) => {
     try {
-      const updatedUser = await updatePerfil(data); // 👈 guarda cambios en /perfil/
+      const updatedUser = await updatePerfil(data);
       setUser(updatedUser);
     } catch (error) {
       console.error("Error al actualizar perfil:", error);
@@ -66,8 +85,8 @@ export default function ProfileScreen() {
       {/* Encabezado */}
       <View style={styles.header}>
         <Text style={styles.title}>Perfil</Text>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Cerrar sesión</Text>
+        <TouchableOpacity style={styles.purpleButton} onPress={handleLogout}>
+          <Text style={styles.buttonText}>Cerrar sesión</Text>
         </TouchableOpacity>
       </View>
 
@@ -85,28 +104,20 @@ export default function ProfileScreen() {
           {user?.alias || `${user?.nombre || ""} ${user?.apellido || ""}`.trim() || "Estudiante"}
         </Text>
         <Text style={styles.carrera}>{user?.carrera || "Carrera no especificada"}</Text>
-        <Text style={styles.email}>{user?.email}</Text>
 
-        <TouchableOpacity 
-          onPress={() => setShowEditModal(true)} 
-          style={styles.editButton}
-        >
-          <Text style={styles.editText}>Editar Perfil</Text>
+        <TouchableOpacity onPress={() => setShowEditModal(true)} style={styles.purpleButton}>
+          <Text style={styles.buttonText}>Editar perfil</Text>
         </TouchableOpacity>
       </View>
 
       {/* Información completa */}
       <View style={styles.infoCard}>
         <Text style={styles.sectionTitle}>Información completa</Text>
-        <Text style={styles.info}>Email: {user?.email}</Text>
         <Text style={styles.info}>Carrera: {user?.carrera}</Text>
         <Text style={styles.info}>Área: {user?.area}</Text>
         <Text style={styles.info}>Biografía: {user?.biografia}</Text>
-        <Text style={styles.info}>
-          Tipo de usuario: {user?.is_admin_interu ? "Administrador" : "Estudiante"}
-        </Text>
 
-        {/* 👇 Mostrar habilidades ofrecidas */}
+        {/* Habilidades ofrecidas */}
         {user?.habilidades_ofrecidas?.length > 0 && (
           <View style={{ marginTop: 10 }}>
             <Text style={styles.sectionTitle}>Habilidades ofrecidas</Text>
@@ -117,7 +128,24 @@ export default function ProfileScreen() {
         )}
       </View>
 
-      {/* 👇 Sección de publicaciones del usuario */}
+      {/* Calificaciones recibidas */}
+      <View style={styles.infoCard}>
+        <Text style={styles.sectionTitle}>Calificaciones recibidas</Text>
+        {calificaciones.length === 0 ? (
+          <Text style={styles.info}>Aún no has recibido calificaciones.</Text>
+        ) : (
+          calificaciones.map((c) => (
+            <View key={c.id_calificacion} style={styles.calificacionItem}>
+              <Text style={styles.info}>
+                {"⭐".repeat(c.puntaje)} ({new Date(c.fecha).toLocaleDateString()})
+              </Text>
+              {c.comentario && <Text style={styles.info}>{c.comentario}</Text>}
+            </View>
+          ))
+        )}
+      </View>
+
+      {/* Publicaciones del usuario */}
       <MisPublicaciones />
 
       {/* Modal de edición de perfil */}
@@ -135,21 +163,25 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#1A1A2E", padding: 20 },
   center: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#1A1A2E" },
   loadingText: { color: "#fff", marginTop: 10 },
-  errorText: { color: "red", fontSize: 16 },
+  errorText: { color: "#F87171", fontSize: 16 },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
   title: { fontSize: 24, fontWeight: "bold", color: "#8A4FFF" },
-  logoutButton: { backgroundColor: "#FF5252", padding: 10, borderRadius: 8 },
-  logoutText: { color: "#fff", fontWeight: "bold" },
   profileCard: { alignItems: "center", marginBottom: 20 },
   avatar: { width: 100, height: 100, borderRadius: 50, marginBottom: 10 },
   avatarPlaceholder: { width: 100, height: 100, borderRadius: 50, backgroundColor: "#333", justifyContent: "center", alignItems: "center", marginBottom: 10 },
   avatarText: { fontSize: 40, color: "#fff" },
-  name: { fontSize: 20, fontWeight: "bold", color: "#fff" },
-  carrera: { fontSize: 16, color: "#ccc", marginBottom: 5 },
-  email: { fontSize: 14, color: "#aaa" },
+  name: { fontSize: 20, fontWeight: "bold", color: "#fff", textAlign: "center" },
+  carrera: { fontSize: 16, color: "#ccc", marginBottom: 5, textAlign: "center" },
   infoCard: { backgroundColor: "#2E2E48", padding: 15, borderRadius: 10, marginBottom: 20 },
   sectionTitle: { fontSize: 18, fontWeight: "bold", color: "#fff", marginBottom: 10 },
   info: { fontSize: 14, color: "#ccc", marginBottom: 5 },
-  editButton: { backgroundColor: "#8A4FFF", padding: 12, borderRadius: 8, marginTop: 10 },
-  editText: { color: "#fff", fontWeight: "bold" }
+  purpleButton: {
+    backgroundColor: "#8A4FFF",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  buttonText: { color: "#fff", fontWeight: "bold", textAlign: "center" },
+  calificacionItem: { marginBottom: 10 },
 });

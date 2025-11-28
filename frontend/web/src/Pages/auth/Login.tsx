@@ -38,10 +38,8 @@ const Login: React.FC = () => {
 
   const validateForm = (): string[] => {
     const errors: string[] = [];
-    if (!email.trim() || !password.trim())
+    if (!email.trim() || !password.trim()) {
       errors.push("Debe completar todos los campos.");
-    if (email.trim() && !email.trim().endsWith("@inacapmail.cl")) {
-      errors.push("Debe usar un correo institucional @inacapmail.cl");
     }
     return errors;
   };
@@ -175,7 +173,7 @@ const Login: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-3 py-3 bg-slate-800/50 border border-slate-600/50 rounded-lg text-sm text-white focus:border-purple-500 focus:outline-none"
-                  placeholder="usuario@inacapmail.cl"
+                  placeholder="usuario@email.com"
                   required
                 />
               </div>

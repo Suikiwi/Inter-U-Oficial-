@@ -1,66 +1,101 @@
-import React, { useEffect, useState } from "react";
-import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from "react-native";
-import { getPublicacionById, editarPublicacion } from "../api";
-import type { Publication } from "../../src/types";
+import React, { useState } from "react";
+import {
+  Modal,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
+import { editarPublicacion } from "../api";
+
+type Publication = {
+  id_publicacion: number;
+  estudiante: number;
+  titulo: string;
+  descripcion?: string;
+  habilidades_buscadas?: string[];
+  habilidades_ofrecidas?: string[];
+  autor_alias?: string;
+  fecha_creacion?: string;
+};
 
 interface Props {
-  idEdit: number | null;   // 👈 ahora puede ser null
+  publicacion: Publication;
   onClose: () => void;
-  onSaved: () => void;
+  onUpdated: () => void;
 }
 
-export default function EditarPublicacionModal({ idEdit, onClose, onSaved }: Props) {
-  const [titulo, setTitulo] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [habilidadesText, setHabilidadesText] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!idEdit) return;
-    const load = async () => {
-      setLoading(true);
-      try {
-        const p: Publication = await getPublicacionById(idEdit);
-        setTitulo(p.titulo);
-        setDescripcion(p.descripcion);
-        setHabilidadesText(p.habilidades_buscadas.join(", "));
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [idEdit]);
+export default function EditarPublicacionModal({
+  publicacion,
+  onClose,
+  onUpdated,
+}: Props) {
+  const [titulo, setTitulo] = useState(publicacion.titulo);
+  const [descripcion, setDescripcion] = useState(publicacion.descripcion || "");
+  const [habilidadesText, setHabilidadesText] = useState(
+    publicacion.habilidades_buscadas?.join(", ") || ""
+  );
 
   const handleSave = async () => {
-    if (!idEdit) return;
-    const habilidades_buscadas = habilidadesText.split(",").map((s) => s.trim()).filter(Boolean);
-    await editarPublicacion(idEdit, { titulo, descripcion, habilidades_buscadas });
-    Alert.alert("✅", "Publicación actualizada correctamente");
-    onSaved();
+    try {
+      const habilidades_buscadas = habilidadesText
+        .split(",")
+        .map((s: string) => s.trim()) 
+        .filter((s: string) => s.length > 0);
+
+      await editarPublicacion(publicacion.id_publicacion, {
+        titulo,
+        descripcion,
+        habilidades_buscadas,
+      });
+
+      Alert.alert( "Publicación actualizada correctamente");
+      onUpdated();
+    } catch (error) {
+      console.error("Error al editar publicación:", error);
+      Alert.alert("Error", "No se pudo editar la publicación.");
+    }
   };
 
   return (
-    <Modal visible={!!idEdit} animationType="slide" onRequestClose={onClose}>
+    <Modal visible={true} animationType="slide" onRequestClose={onClose}>
       <View style={styles.container}>
         <Text style={styles.title}>Editar Publicación</Text>
-        {loading ? (
-          <ActivityIndicator color="#8A4FFF" />
-        ) : (
-          <>
-            <TextInput style={styles.input} value={titulo} onChangeText={setTitulo} placeholder="Título" />
-            <TextInput style={styles.input} value={descripcion} onChangeText={setDescripcion} placeholder="Descripción" multiline />
-            <TextInput style={styles.input} value={habilidadesText} onChangeText={setHabilidadesText} placeholder="Habilidades (coma)" multiline />
 
-            <View style={styles.actions}>
-              <TouchableOpacity onPress={onClose} style={styles.cancel}>
-                <Text style={styles.cancelText}>Cancelar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleSave} style={styles.save}>
-                <Text style={styles.saveText}>Guardar</Text>
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
+        <TextInput
+          style={styles.input}
+          value={titulo}
+          onChangeText={setTitulo}
+          placeholder="Título"
+          placeholderTextColor="#888"
+        />
+        <TextInput
+          style={styles.input}
+          value={descripcion}
+          onChangeText={setDescripcion}
+          placeholder="Descripción"
+          placeholderTextColor="#888"
+          multiline
+        />
+        <TextInput
+          style={styles.input}
+          value={habilidadesText}
+          onChangeText={setHabilidadesText}
+          placeholder="Habilidades (coma)"
+          placeholderTextColor="#888"
+          multiline
+        />
+
+        <View style={styles.actions}>
+          <TouchableOpacity onPress={onClose} style={styles.cancel}>
+            <Text style={styles.cancelText}>Cancelar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleSave} style={styles.save}>
+            <Text style={styles.saveText}>Guardar</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </Modal>
   );
@@ -69,7 +104,13 @@ export default function EditarPublicacionModal({ idEdit, onClose, onSaved }: Pro
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#1A1A2E", padding: 20 },
   title: { fontSize: 22, fontWeight: "bold", color: "#8A4FFF", marginBottom: 20 },
-  input: { backgroundColor: "#2E2E48", color: "#fff", padding: 12, borderRadius: 8, marginBottom: 15 },
+  input: {
+    backgroundColor: "#2E2E48",
+    color: "#fff",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 15,
+  },
   actions: { flexDirection: "row", justifyContent: "space-between", marginTop: 20 },
   cancel: { backgroundColor: "#555", padding: 12, borderRadius: 8 },
   cancelText: { color: "#fff" },
