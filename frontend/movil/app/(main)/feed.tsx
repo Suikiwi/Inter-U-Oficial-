@@ -20,8 +20,8 @@ import EditarPublicacionModal from "../components/editarpublicacionmodal";
 import CrearReporteModal from "../components/CrearReporteModal";
 
 type Publication = {
-  id_publicacion: number;   // 👈 correcto, coincide con tu modelo
-  estudiante: number;
+  id_publicacion: number;
+  estudiante: number; // id del usuario dueño de la publicación
   titulo: string;
   descripcion?: string;
   habilidades_buscadas?: string[];
@@ -44,6 +44,7 @@ export default function FeedScreen() {
       setLoading(true);
       try {
         const perfil = await getPerfil();
+        //  ahora sí existe porque lo agregaste al serializer
         setUserId(perfil.estudiante);
 
         const data: Publication[] = await obtenerPublicacionesGlobal();

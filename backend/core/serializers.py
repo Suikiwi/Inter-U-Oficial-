@@ -41,6 +41,7 @@ class PerfilCompletoSerializer(serializers.ModelSerializer):
         model = Perfil
         fields = [
             'id_perfil',
+            'estudiante',
             'alias',
             'nombre',
             'apellido',

@@ -2,7 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-
+import { LinearGradient } from 'expo-linear-gradient';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
@@ -16,10 +16,17 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: '#1A1A2E' }, // fondo del header
-          headerTintColor: '#fff',                     // color de texto y botones
-          headerTitleStyle: { fontWeight: 'bold' },    // estilo del título
-          headerTitle: 'Inter-U',         
+          headerBackground: () => (
+            <LinearGradient
+              colors={['#7c3aed', '#9333ea', '#a855f7']} // gradiente morado
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={{ flex: 1 }}
+            />
+          ),
+          headerTintColor: '#fff',                  // color de texto y botones
+          headerTitleStyle: { fontWeight: 'bold' }, // estilo del título
+          headerTitle: 'Inter-U',
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
