@@ -5,6 +5,7 @@ import PublicationFormModal from "./PublicationFormModal";
 import { useNavigate } from "react-router-dom";
 import { getUserIdFromAccessToken } from "../../Services/auth";
 import CrearReporte from "../reportes/CrearReporte";
+import PerfilVista from "../profile/PerfilVista"; 
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 const PUBLICACIONES_ENDPOINT = `${API_BASE_URL}/publicaciones/`;
@@ -13,14 +14,14 @@ const PublicationsFeed: React.FC = () => {
   const [publicaciones, setPublicaciones] = useState<Publication[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<number | undefined>(undefined);
+  const [perfilModalId, setPerfilModalId] = useState<number | null>(null);
+
   const navigate = useNavigate();
   const userId = getUserIdFromAccessToken();
 
-  // Estados para filtros
   const [filtroTexto, setFiltroTexto] = useState("");
   const [filtroHabilidad, setFiltroHabilidad] = useState("");
 
-  // Lógica de filtrado
   const publicacionesFiltradas = publicaciones.filter((p) => {
     const textoMatch =
       filtroTexto === "" ||
@@ -104,7 +105,12 @@ const PublicationsFeed: React.FC = () => {
                 {/* Alias + fecha/hora */}
                 <p className="text-slate-400 text-xs mb-2">
                   Publicado por{" "}
-                  <span className="font-medium text-purple-200">{p.autor_alias || "—"}</span>{" "}
+                  <span
+                    onClick={() => setPerfilModalId(p.estudiante)}
+                    className="text-purple-400 hover:text-purple-300 font-semibold cursor-pointer"
+                  >
+                    {p.autor_alias || "—"}
+                  </span>{" "}
                   el{" "}
                   {p.fecha_creacion
                     ? new Date(p.fecha_creacion).toLocaleDateString()
@@ -179,6 +185,11 @@ const PublicationsFeed: React.FC = () => {
           />
         )}
       </div>
+
+      {/* Modal de perfil público del autor */}
+      {perfilModalId && (
+        <PerfilVista id={perfilModalId} onClose={() => setPerfilModalId(null)} />
+      )}
     </div>
   );
 };

@@ -363,7 +363,13 @@ class PerfilDetailView(generics.RetrieveUpdateAPIView):
         perfil, _ = Perfil.objects.get_or_create(estudiante=self.request.user)
         return perfil
 
+class PerfilPublicoPorUsuarioView(generics.RetrieveAPIView):
+    serializer_class = PerfilCompletoSerializer
+    permission_classes = [permissions.AllowAny] 
 
+    def get_object(self):
+        usuario_id = self.kwargs.get("usuario_id")
+        return Perfil.objects.get(estudiante__id=usuario_id)
 
 class EliminarMiCuenta(APIView):
     permission_classes = [permissions.IsAuthenticated]

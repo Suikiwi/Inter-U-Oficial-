@@ -13,7 +13,7 @@ from .views import (
     # Perfil
     PerfilDetailView, CrearPerfilView, EliminarMiCuenta,
     # Reportes
-    CrearReporteView, ListarReportesView, ModerarReporteView, 
+    CrearReporteView, ListarReportesView, ModerarReporteView, PerfilPublicoPorUsuarioView,
     # Consentimiento
     verificar_consentimiento ,registrar_consentimiento
     
@@ -25,6 +25,7 @@ urlpatterns = [
 
     # Perfil
     path('perfil/', PerfilDetailView.as_view(), name='perfil-estudiante'),
+    path('perfiles/usuario/<int:usuario_id>/', PerfilPublicoPorUsuarioView.as_view(), name='perfil-publico-por-usuario'),
     path('perfil/crear/', CrearPerfilView.as_view(), name='crear-perfil'),
     path("perfil/eliminar/", EliminarMiCuenta.as_view(), name="perfil-eliminar"),
 

@@ -16,8 +16,13 @@ export const Layout: React.FC<LayoutProps> = ({
   centerContent = false,
 }) => {
   const location = useLocation();
-
   const token = !!localStorage.getItem("accessToken");
+
+  // Redirección condicional del logo
+  const logoRedirect =
+    location.pathname.includes("/perfil") || location.pathname.includes("/chat")
+      ? "/feed"
+      : "/";
 
   return (
     <div className="bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen flex flex-col relative overflow-x-hidden">
@@ -31,7 +36,10 @@ export const Layout: React.FC<LayoutProps> = ({
         <header className={`relative z-10 ${styles.glassEffect}`}>
           <div className="max-w-7xl mx-auto px-4 py-4 border-b border-purple-500/20">
             <div className="flex items-center justify-between">
-              <Link to="/" className="font-['Pacifico'] text-2xl text-primary font-bold">
+              <Link
+                to={logoRedirect}
+                className="font-['Pacifico'] text-2xl text-primary font-bold"
+              >
                 Inter-U
               </Link>
             </div>

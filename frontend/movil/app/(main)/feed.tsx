@@ -1,3 +1,4 @@
+// app/(main)/feed.tsx
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -18,6 +19,7 @@ import {
 import ChatScreen from "../components/chat";
 import EditarPublicacionModal from "../components/editarpublicacionmodal";
 import CrearReporteModal from "../components/CrearReporteModal";
+import PerfilModal from "../components/PerfilModal";
 
 type Publication = {
   id_publicacion: number;
@@ -38,13 +40,13 @@ export default function FeedScreen() {
   const [chatId, setChatId] = useState<number | null>(null);
   const [editPub, setEditPub] = useState<Publication | null>(null);
   const [reporteContext, setReporteContext] = useState<{ publicacionId?: number } | null>(null);
+  const [perfilId, setPerfilId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const perfil = await getPerfil();
-        //  ahora sí existe porque lo agregaste al serializer
         setUserId(perfil.estudiante);
 
         const data: Publication[] = await obtenerPublicacionesGlobal();
@@ -89,7 +91,10 @@ export default function FeedScreen() {
       <View style={styles.card}>
         <Text style={styles.titulo}>{item.titulo}</Text>
         <Text style={styles.meta}>
-          Publicado por <Text style={styles.alias}>{item.autor_alias || "—"}</Text>{" "}
+          Publicado por{" "}
+          <TouchableOpacity onPress={() => setPerfilId(item.estudiante)}>
+            <Text style={styles.alias}>{item.autor_alias || "—"}</Text>
+          </TouchableOpacity>{" "}
           {fecha &&
             `el ${fecha.toLocaleDateString()} a las ${fecha.toLocaleTimeString([], {
               hour: "2-digit",
@@ -175,6 +180,10 @@ export default function FeedScreen() {
             onClose={() => setReporteContext(null)}
           />
         )}
+      </Modal>
+
+      <Modal visible={perfilId !== null} animationType="fade" transparent>
+        {perfilId && <PerfilModal id={perfilId} onClose={() => setPerfilId(null)} />}
       </Modal>
     </View>
   );
