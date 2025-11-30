@@ -1,0 +1,2035 @@
+[
+{
+  "model": "core.perfil",
+  "pk": 1,
+  "fields": {
+    "estudiante": 2,
+    "alias": "kimi",
+    "nombre": "Kimi",
+    "apellido": "kokoa",
+    "carrera": "IngenierÝa en Conectividad y Redes",
+    "area": "Redes y Telecomunicaciones",
+    "biografia": "waos",
+    "foto": "",
+    "habilidades_ofrecidas": [
+      "react",
+      "django"
+    ]
+  }
+},
+{
+  "model": "core.perfil",
+  "pk": 2,
+  "fields": {
+    "estudiante": 1,
+    "alias": "fe±a",
+    "nombre": "fernanda",
+    "apellido": "del valle",
+    "carrera": "IngenierÝa en Informßtica",
+    "area": "Redes y Telecomunicaciones",
+    "biografia": "holi",
+    "foto": "",
+    "habilidades_ofrecidas": [
+      "react"
+    ]
+  }
+},
+{
+  "model": "core.perfil",
+  "pk": 3,
+  "fields": {
+    "estudiante": 7,
+    "alias": null,
+    "nombre": "",
+    "apellido": "",
+    "carrera": "",
+    "area": "",
+    "biografia": null,
+    "foto": null,
+    "habilidades_ofrecidas": []
+  }
+},
+{
+  "model": "core.publicacion",
+  "pk": 1,
+  "fields": {
+    "titulo": "Apuntes de Arquitectura SaaS",
+    "descripcion": "Material acadÚmico sobre arquitectura SaaS.",
+    "habilidades_ofrecidas": [
+      "Arquitectura SaaS"
+    ],
+    "habilidades_buscadas": [
+      "UX"
+    ],
+    "fecha_creacion": "2025-11-25T02:41:44.849Z",
+    "estado": true,
+    "estudiante": 1
+  }
+},
+{
+  "model": "core.publicacion",
+  "pk": 2,
+  "fields": {
+    "titulo": "GuÝa de UX",
+    "descripcion": "Documentaci¾n sobre experiencia de usuario.",
+    "habilidades_ofrecidas": [
+      "UX",
+      "Figma"
+    ],
+    "habilidades_buscadas": [
+      "Testing"
+    ],
+    "fecha_creacion": "2025-11-25T02:41:44.904Z",
+    "estado": true,
+    "estudiante": 1
+  }
+},
+{
+  "model": "core.publicacion",
+  "pk": 3,
+  "fields": {
+    "titulo": "Investigaci¾n APIs",
+    "descripcion": "Ejemplos de documentaci¾n RESTful y OpenAPI.",
+    "habilidades_ofrecidas": [
+      "APIs",
+      "OpenAPI"
+    ],
+    "habilidades_buscadas": [
+      "SaaS"
+    ],
+    "fecha_creacion": "2025-11-25T02:41:44.985Z",
+    "estado": true,
+    "estudiante": 1
+  }
+},
+{
+  "model": "core.publicacion",
+  "pk": 4,
+  "fields": {
+    "titulo": "Apuntes de Figma",
+    "descripcion": "Recursos para dise±o de interfaces y prototipado.",
+    "habilidades_ofrecidas": [
+      "Figma",
+      "UI Design"
+    ],
+    "habilidades_buscadas": [
+      "Arquitectura SaaS"
+    ],
+    "fecha_creacion": "2025-11-25T02:41:57.751Z",
+    "estado": true,
+    "estudiante": 2
+  }
+},
+{
+  "model": "core.publicacion",
+  "pk": 5,
+  "fields": {
+    "titulo": "Material de Testing",
+    "descripcion": "Documentos sobre pruebas de software y QA.",
+    "habilidades_ofrecidas": [
+      "Testing",
+      "QA"
+    ],
+    "habilidades_buscadas": [
+      "UX"
+    ],
+    "fecha_creacion": "2025-11-25T02:41:57.776Z",
+    "estado": true,
+    "estudiante": 2
+  }
+},
+{
+  "model": "core.publicacion",
+  "pk": 6,
+  "fields": {
+    "titulo": "Documentaci¾n de Proyecto",
+    "descripcion": "Notas y reportes del proyecto acadÚmico.",
+    "habilidades_ofrecidas": [
+      "Documentaci¾n",
+      "Reportes"
+    ],
+    "habilidades_buscadas": [
+      "APIs"
+    ],
+    "fecha_creacion": "2025-11-25T02:41:57.792Z",
+    "estado": true,
+    "estudiante": 2
+  }
+},
+{
+  "model": "core.publicacion",
+  "pk": 7,
+  "fields": {
+    "titulo": "Busco ayuda urgente para inglÚs",
+    "descripcion": "tengo prueba la proxima semana, soy buena en matematicas",
+    "habilidades_ofrecidas": [
+      "react"
+    ],
+    "habilidades_buscadas": [
+      "ingles"
+    ],
+    "fecha_creacion": "2025-11-25T14:43:08.664Z",
+    "estado": true,
+    "estudiante": 1
+  }
+},
+{
+  "model": "core.publicacion",
+  "pk": 8,
+  "fields": {
+    "titulo": "Hola",
+    "descripcion": "Waos",
+    "habilidades_ofrecidas": [
+      "react",
+      "django"
+    ],
+    "habilidades_buscadas": [
+      "Python"
+    ],
+    "fecha_creacion": "2025-11-28T19:48:09.879Z",
+    "estado": true,
+    "estudiante": 2
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 1,
+  "fields": {
+    "fecha_inicio": "2025-11-25T02:49:01.117Z",
+    "estado_intercambio": true,
+    "publicacion": 1,
+    "titulo": "Chat sobre Arquitectura SaaS"
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 2,
+  "fields": {
+    "fecha_inicio": "2025-11-25T02:49:01.159Z",
+    "estado_intercambio": false,
+    "publicacion": 4,
+    "titulo": "Chat sobre Figma"
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 3,
+  "fields": {
+    "fecha_inicio": "2025-11-25T02:49:01.182Z",
+    "estado_intercambio": false,
+    "publicacion": 2,
+    "titulo": "Chat sobre UX"
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 4,
+  "fields": {
+    "fecha_inicio": "2025-11-25T02:49:01.208Z",
+    "estado_intercambio": false,
+    "publicacion": 5,
+    "titulo": "Chat sobre Testing"
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 5,
+  "fields": {
+    "fecha_inicio": "2025-11-25T02:49:01.226Z",
+    "estado_intercambio": false,
+    "publicacion": 3,
+    "titulo": "Chat sobre APIs"
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 6,
+  "fields": {
+    "fecha_inicio": "2025-11-25T02:49:03.154Z",
+    "estado_intercambio": false,
+    "publicacion": 6,
+    "titulo": "Chat sobre Documentaci¾n"
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 7,
+  "fields": {
+    "fecha_inicio": "2025-11-25T02:49:10.276Z",
+    "estado_intercambio": false,
+    "publicacion": 1,
+    "titulo": "Segundo intercambio sobre Arquitectura SaaS"
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 8,
+  "fields": {
+    "fecha_inicio": "2025-11-25T02:49:10.323Z",
+    "estado_intercambio": false,
+    "publicacion": 4,
+    "titulo": "Segundo intercambio sobre Figma"
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 9,
+  "fields": {
+    "fecha_inicio": "2025-11-25T02:49:11.835Z",
+    "estado_intercambio": false,
+    "publicacion": 2,
+    "titulo": "Segundo intercambio sobre UX"
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 10,
+  "fields": {
+    "fecha_inicio": "2025-11-26T20:17:18.075Z",
+    "estado_intercambio": false,
+    "publicacion": 2,
+    "titulo": ""
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 11,
+  "fields": {
+    "fecha_inicio": "2025-11-26T20:32:44.058Z",
+    "estado_intercambio": false,
+    "publicacion": 1,
+    "titulo": ""
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 12,
+  "fields": {
+    "fecha_inicio": "2025-11-26T20:40:52.200Z",
+    "estado_intercambio": false,
+    "publicacion": 2,
+    "titulo": ""
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 13,
+  "fields": {
+    "fecha_inicio": "2025-11-26T20:50:09.966Z",
+    "estado_intercambio": false,
+    "publicacion": 2,
+    "titulo": ""
+  }
+},
+{
+  "model": "core.chat",
+  "pk": 14,
+  "fields": {
+    "fecha_inicio": "2025-11-28T18:23:21.908Z",
+    "estado_intercambio": false,
+    "publicacion": 7,
+    "titulo": ""
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 1,
+  "fields": {
+    "chat": 1,
+    "estudiante": 1,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 2,
+  "fields": {
+    "chat": 1,
+    "estudiante": 2,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 3,
+  "fields": {
+    "chat": 2,
+    "estudiante": 2,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 4,
+  "fields": {
+    "chat": 2,
+    "estudiante": 1,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 5,
+  "fields": {
+    "chat": 3,
+    "estudiante": 1,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 6,
+  "fields": {
+    "chat": 3,
+    "estudiante": 2,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 7,
+  "fields": {
+    "chat": 4,
+    "estudiante": 2,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 8,
+  "fields": {
+    "chat": 4,
+    "estudiante": 1,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 9,
+  "fields": {
+    "chat": 5,
+    "estudiante": 1,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 10,
+  "fields": {
+    "chat": 5,
+    "estudiante": 2,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 11,
+  "fields": {
+    "chat": 6,
+    "estudiante": 2,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 12,
+  "fields": {
+    "chat": 6,
+    "estudiante": 1,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 13,
+  "fields": {
+    "chat": 7,
+    "estudiante": 1,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 14,
+  "fields": {
+    "chat": 7,
+    "estudiante": 2,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 15,
+  "fields": {
+    "chat": 8,
+    "estudiante": 2,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 16,
+  "fields": {
+    "chat": 8,
+    "estudiante": 1,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 17,
+  "fields": {
+    "chat": 9,
+    "estudiante": 1,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 18,
+  "fields": {
+    "chat": 9,
+    "estudiante": 2,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 19,
+  "fields": {
+    "chat": 10,
+    "estudiante": 1,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 20,
+  "fields": {
+    "chat": 10,
+    "estudiante": 2,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 21,
+  "fields": {
+    "chat": 11,
+    "estudiante": 1,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 22,
+  "fields": {
+    "chat": 11,
+    "estudiante": 2,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 23,
+  "fields": {
+    "chat": 12,
+    "estudiante": 1,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 24,
+  "fields": {
+    "chat": 12,
+    "estudiante": 2,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 25,
+  "fields": {
+    "chat": 13,
+    "estudiante": 1,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 26,
+  "fields": {
+    "chat": 13,
+    "estudiante": 2,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 27,
+  "fields": {
+    "chat": 14,
+    "estudiante": 1,
+    "rol": "autor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.chatparticipante",
+  "pk": 28,
+  "fields": {
+    "chat": 14,
+    "estudiante": 2,
+    "rol": "receptor",
+    "calificado": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 1,
+  "fields": {
+    "texto": "hola",
+    "fecha": "2025-11-25T02:50:03.447Z",
+    "chat": 1,
+    "estudiante": 2,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 2,
+  "fields": {
+    "texto": "como estas ",
+    "fecha": "2025-11-25T02:50:26.455Z",
+    "chat": 1,
+    "estudiante": 2,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 3,
+  "fields": {
+    "texto": "mmmm no muy bien ",
+    "fecha": "2025-11-25T02:55:50.521Z",
+    "chat": 1,
+    "estudiante": 1,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 4,
+  "fields": {
+    "texto": "hola",
+    "fecha": "2025-11-25T13:40:54.227Z",
+    "chat": 2,
+    "estudiante": 1,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 5,
+  "fields": {
+    "texto": "hola",
+    "fecha": "2025-11-25T14:28:33.582Z",
+    "chat": 2,
+    "estudiante": 2,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 6,
+  "fields": {
+    "texto": "hola",
+    "fecha": "2025-11-26T19:27:30.828Z",
+    "chat": 2,
+    "estudiante": 2,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 7,
+  "fields": {
+    "texto": "Hola",
+    "fecha": "2025-11-26T20:50:14.060Z",
+    "chat": 13,
+    "estudiante": 2,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 8,
+  "fields": {
+    "texto": "C¾mo estas",
+    "fecha": "2025-11-26T20:50:18.569Z",
+    "chat": 13,
+    "estudiante": 2,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 9,
+  "fields": {
+    "texto": "Hola",
+    "fecha": "2025-11-26T21:14:55.411Z",
+    "chat": 2,
+    "estudiante": 2,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 10,
+  "fields": {
+    "texto": "Waos",
+    "fecha": "2025-11-26T21:15:05.624Z",
+    "chat": 2,
+    "estudiante": 2,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 11,
+  "fields": {
+    "texto": "Por quÚ ",
+    "fecha": "2025-11-26T21:37:34.702Z",
+    "chat": 1,
+    "estudiante": 2,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 12,
+  "fields": {
+    "texto": "Hola",
+    "fecha": "2025-11-28T18:02:32.811Z",
+    "chat": 10,
+    "estudiante": 2,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 13,
+  "fields": {
+    "texto": "Hola",
+    "fecha": "2025-11-28T18:26:22.500Z",
+    "chat": 9,
+    "estudiante": 2,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 14,
+  "fields": {
+    "texto": "Waos",
+    "fecha": "2025-11-28T18:26:28.291Z",
+    "chat": 8,
+    "estudiante": 2,
+    "leido": false
+  }
+},
+{
+  "model": "core.mensaje",
+  "pk": 15,
+  "fields": {
+    "texto": "Hlla",
+    "fecha": "2025-11-28T19:47:17.238Z",
+    "chat": 1,
+    "estudiante": 2,
+    "leido": false
+  }
+},
+{
+  "model": "core.calificacionchat",
+  "pk": 1,
+  "fields": {
+    "chat": 1,
+    "evaluador": 1,
+    "puntaje": 5,
+    "comentario": "",
+    "fecha": "2025-11-25T02:56:12.117Z"
+  }
+},
+{
+  "model": "core.calificacionchat",
+  "pk": 2,
+  "fields": {
+    "chat": 1,
+    "evaluador": 2,
+    "puntaje": 5,
+    "comentario": "",
+    "fecha": "2025-11-25T02:56:52.538Z"
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 1,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat 'Chat sobre Arquitectura SaaS'",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-25T02:50:03.453Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 1,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 2,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat 'Chat sobre Arquitectura SaaS'",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-25T02:50:26.460Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 1,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 3,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat 'Chat sobre Arquitectura SaaS'",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-25T02:55:50.528Z",
+    "leida": true,
+    "estudiante": 2,
+    "chat": 1,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 4,
+  "fields": {
+    "mensaje": "El autor ha marcado el chat 'Chat sobre Arquitectura SaaS' como completado",
+    "tipo": "intercambio_completado",
+    "fecha": "2025-11-25T02:56:10.989Z",
+    "leida": false,
+    "estudiante": 2,
+    "chat": 1,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 5,
+  "fields": {
+    "mensaje": "alicia.norambuena@inacapmail.cl calific¾ el chat 'Chat sobre Arquitectura SaaS'",
+    "tipo": "calificacion_chat",
+    "fecha": "2025-11-25T02:56:12.125Z",
+    "leida": false,
+    "estudiante": 2,
+    "chat": 1,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 6,
+  "fields": {
+    "mensaje": "fe±a calific¾ el chat 'Chat sobre Arquitectura SaaS'",
+    "tipo": "calificacion_chat",
+    "fecha": "2025-11-25T02:56:52.542Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 1,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 7,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat 'Chat sobre Figma'",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-25T13:40:54.237Z",
+    "leida": false,
+    "estudiante": 2,
+    "chat": 2,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 8,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat 'Chat sobre Figma'",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-25T14:28:33.592Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 2,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 9,
+  "fields": {
+    "mensaje": "fe±a calific¾ el chat 'Chat sobre Arquitectura SaaS'",
+    "tipo": "calificacion_chat",
+    "fecha": "2025-11-25T21:10:26.103Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 1,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 10,
+  "fields": {
+    "mensaje": "fe±a calific¾ el chat 'Chat sobre Arquitectura SaaS'",
+    "tipo": "calificacion_chat",
+    "fecha": "2025-11-26T19:07:44.196Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 1,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 11,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat 'Chat sobre Figma'",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-26T19:27:30.843Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 2,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 12,
+  "fields": {
+    "mensaje": "Se ha iniciado un nuevo chat: ''",
+    "tipo": "nuevo_chat",
+    "fecha": "2025-11-26T20:17:18.104Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 10,
+    "publicacion": 2,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 13,
+  "fields": {
+    "mensaje": "Se ha iniciado un nuevo chat: ''",
+    "tipo": "nuevo_chat",
+    "fecha": "2025-11-26T20:32:44.078Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 11,
+    "publicacion": 1,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 14,
+  "fields": {
+    "mensaje": "Se ha iniciado un nuevo chat: ''",
+    "tipo": "nuevo_chat",
+    "fecha": "2025-11-26T20:40:52.214Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 12,
+    "publicacion": 2,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 15,
+  "fields": {
+    "mensaje": "Se ha iniciado un nuevo chat: ''",
+    "tipo": "nuevo_chat",
+    "fecha": "2025-11-26T20:50:09.978Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 13,
+    "publicacion": 2,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 16,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat ''",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-26T20:50:14.072Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 13,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 17,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat ''",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-26T20:50:18.581Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 13,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 18,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat 'Chat sobre Figma'",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-26T21:14:55.426Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 2,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 19,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat 'Chat sobre Figma'",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-26T21:15:05.636Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 2,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 20,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat 'Chat sobre Arquitectura SaaS'",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-26T21:37:34.714Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 1,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 21,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat ''",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-28T18:02:32.821Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 10,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 22,
+  "fields": {
+    "mensaje": "Se ha iniciado un nuevo chat: ''",
+    "tipo": "nuevo_chat",
+    "fecha": "2025-11-28T18:23:21.924Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 14,
+    "publicacion": 7,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 23,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat 'Segundo intercambio sobre UX'",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-28T18:26:22.513Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 9,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 24,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat 'Segundo intercambio sobre Figma'",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-28T18:26:28.304Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 8,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.notificacion",
+  "pk": 25,
+  "fields": {
+    "mensaje": "Nuevo mensaje en el chat 'Chat sobre Arquitectura SaaS'",
+    "tipo": "nuevo_mensaje",
+    "fecha": "2025-11-28T19:47:17.248Z",
+    "leida": false,
+    "estudiante": 1,
+    "chat": 1,
+    "publicacion": null,
+    "calificacion": null
+  }
+},
+{
+  "model": "core.reporte",
+  "pk": 1,
+  "fields": {
+    "motivo": "no me gusta esta publicaci¾n creo que infringe las normas",
+    "fecha": "2025-11-25T02:52:15.317Z",
+    "estado": 2,
+    "administrador": null,
+    "estudiante": 1,
+    "publicacion": 5
+  }
+},
+{
+  "model": "core.reporte",
+  "pk": 2,
+  "fields": {
+    "motivo": "esta publicacion deberia de ser sancionada",
+    "fecha": "2025-11-25T03:01:46.278Z",
+    "estado": 0,
+    "administrador": null,
+    "estudiante": 2,
+    "publicacion": 2
+  }
+},
+{
+  "model": "core.reporte",
+  "pk": 3,
+  "fields": {
+    "motivo": "Muy malo la persona no responde",
+    "fecha": "2025-11-28T21:47:15.409Z",
+    "estado": 0,
+    "administrador": null,
+    "estudiante": 2,
+    "publicacion": 7
+  }
+},
+{
+  "model": "core.consentimiento",
+  "pk": 1,
+  "fields": {
+    "estudiante": 2,
+    "aceptado": true,
+    "fecha_aceptacion": "2025-11-25T02:49:49.138Z"
+  }
+},
+{
+  "model": "core.consentimiento",
+  "pk": 2,
+  "fields": {
+    "estudiante": 1,
+    "aceptado": true,
+    "fecha_aceptacion": "2025-11-25T02:51:29.433Z"
+  }
+},
+{
+  "model": "core.consentimiento",
+  "pk": 3,
+  "fields": {
+    "estudiante": 3,
+    "aceptado": true,
+    "fecha_aceptacion": "2025-11-25T03:03:26.979Z"
+  }
+},
+{
+  "model": "core.consentimiento",
+  "pk": 4,
+  "fields": {
+    "estudiante": 7,
+    "aceptado": true,
+    "fecha_aceptacion": "2025-11-25T20:04:04.876Z"
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$owwvDTcomMXcrKKnTNW6BK$FTb5x5NLDNOLp21hyFSroPTYTHC45MuldNJ7jAYbmog=",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "date_joined": "2025-11-25T02:40:46.986Z",
+    "email": "fernanda.delvalle02@inacapmail.cl",
+    "acepta_politicas": true,
+    "is_estudiante": true,
+    "is_admin_interu": false,
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$NB7jLxY7BSL5Y6vFtTbm9W$8crKF894L1SYOg1bX759LrgZM208+1EuTa0VYEAzJ4A=",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "date_joined": "2025-11-25T02:40:58.225Z",
+    "email": "alicia.norambuena@inacapmail.cl",
+    "acepta_politicas": true,
+    "is_estudiante": true,
+    "is_admin_interu": false,
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$s1d69no3l0J6hOdxqSy9PS$V4Nu/zjr8cE15AyIpis2DE785skasT4NWnBu7iXoWQQ=",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "date_joined": "2025-11-25T02:41:19.776Z",
+    "email": "admin@inacapmail.cl",
+    "acepta_politicas": true,
+    "is_estudiante": false,
+    "is_admin_interu": true,
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$3ZVjuCnug61Gevd08blmqw$b8R+4D4Bh40tanXfZnQPNxaDHG6DCzovJpOJD7inAXo=",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "date_joined": "2025-11-25T14:24:20.591Z",
+    "email": "valentina.vergara09@inacapmail.cl",
+    "acepta_politicas": true,
+    "is_estudiante": true,
+    "is_admin_interu": false,
+    "is_active": false,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 7,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$BvtK0q1eJH8N1z2HCCFU8M$ceS5jmUxczZtSxj3T0CzlVOZDQOltKrCgjjtUxUR9dg=",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "date_joined": "2025-11-25T20:00:25.330Z",
+    "email": "minyoonkook13@gmail.com",
+    "acepta_politicas": true,
+    "is_estudiante": true,
+    "is_admin_interu": false,
+    "is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 1,
+  "fields": {
+    "name": "Can add chat",
+    "content_type": 1,
+    "codename": "add_chat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 2,
+  "fields": {
+    "name": "Can change chat",
+    "content_type": 1,
+    "codename": "change_chat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 3,
+  "fields": {
+    "name": "Can delete chat",
+    "content_type": 1,
+    "codename": "delete_chat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 4,
+  "fields": {
+    "name": "Can view chat",
+    "content_type": 1,
+    "codename": "view_chat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 5,
+  "fields": {
+    "name": "Can add calificacion chat",
+    "content_type": 2,
+    "codename": "add_calificacionchat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 6,
+  "fields": {
+    "name": "Can change calificacion chat",
+    "content_type": 2,
+    "codename": "change_calificacionchat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 7,
+  "fields": {
+    "name": "Can delete calificacion chat",
+    "content_type": 2,
+    "codename": "delete_calificacionchat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 8,
+  "fields": {
+    "name": "Can view calificacion chat",
+    "content_type": 2,
+    "codename": "view_calificacionchat"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 9,
+  "fields": {
+    "name": "Can add mensaje",
+    "content_type": 3,
+    "codename": "add_mensaje"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 10,
+  "fields": {
+    "name": "Can change mensaje",
+    "content_type": 3,
+    "codename": "change_mensaje"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 11,
+  "fields": {
+    "name": "Can delete mensaje",
+    "content_type": 3,
+    "codename": "delete_mensaje"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 12,
+  "fields": {
+    "name": "Can view mensaje",
+    "content_type": 3,
+    "codename": "view_mensaje"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 13,
+  "fields": {
+    "name": "Can add perfil",
+    "content_type": 4,
+    "codename": "add_perfil"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 14,
+  "fields": {
+    "name": "Can change perfil",
+    "content_type": 4,
+    "codename": "change_perfil"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 15,
+  "fields": {
+    "name": "Can delete perfil",
+    "content_type": 4,
+    "codename": "delete_perfil"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 16,
+  "fields": {
+    "name": "Can view perfil",
+    "content_type": 4,
+    "codename": "view_perfil"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 17,
+  "fields": {
+    "name": "Can add publicacion",
+    "content_type": 5,
+    "codename": "add_publicacion"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 18,
+  "fields": {
+    "name": "Can change publicacion",
+    "content_type": 5,
+    "codename": "change_publicacion"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 19,
+  "fields": {
+    "name": "Can delete publicacion",
+    "content_type": 5,
+    "codename": "delete_publicacion"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 20,
+  "fields": {
+    "name": "Can view publicacion",
+    "content_type": 5,
+    "codename": "view_publicacion"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 21,
+  "fields": {
+    "name": "Can add notificacion",
+    "content_type": 6,
+    "codename": "add_notificacion"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 22,
+  "fields": {
+    "name": "Can change notificacion",
+    "content_type": 6,
+    "codename": "change_notificacion"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 23,
+  "fields": {
+    "name": "Can delete notificacion",
+    "content_type": 6,
+    "codename": "delete_notificacion"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 24,
+  "fields": {
+    "name": "Can view notificacion",
+    "content_type": 6,
+    "codename": "view_notificacion"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 25,
+  "fields": {
+    "name": "Can add reporte",
+    "content_type": 7,
+    "codename": "add_reporte"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 26,
+  "fields": {
+    "name": "Can change reporte",
+    "content_type": 7,
+    "codename": "change_reporte"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 27,
+  "fields": {
+    "name": "Can delete reporte",
+    "content_type": 7,
+    "codename": "delete_reporte"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 28,
+  "fields": {
+    "name": "Can view reporte",
+    "content_type": 7,
+    "codename": "view_reporte"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 29,
+  "fields": {
+    "name": "Can add chat participante",
+    "content_type": 8,
+    "codename": "add_chatparticipante"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 30,
+  "fields": {
+    "name": "Can change chat participante",
+    "content_type": 8,
+    "codename": "change_chatparticipante"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 31,
+  "fields": {
+    "name": "Can delete chat participante",
+    "content_type": 8,
+    "codename": "delete_chatparticipante"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 32,
+  "fields": {
+    "name": "Can view chat participante",
+    "content_type": 8,
+    "codename": "view_chatparticipante"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 33,
+  "fields": {
+    "name": "Can add consentimiento",
+    "content_type": 9,
+    "codename": "add_consentimiento"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 34,
+  "fields": {
+    "name": "Can change consentimiento",
+    "content_type": 9,
+    "codename": "change_consentimiento"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 35,
+  "fields": {
+    "name": "Can delete consentimiento",
+    "content_type": 9,
+    "codename": "delete_consentimiento"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 36,
+  "fields": {
+    "name": "Can view consentimiento",
+    "content_type": 9,
+    "codename": "view_consentimiento"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 37,
+  "fields": {
+    "name": "Can add user",
+    "content_type": 10,
+    "codename": "add_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 38,
+  "fields": {
+    "name": "Can change user",
+    "content_type": 10,
+    "codename": "change_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 39,
+  "fields": {
+    "name": "Can delete user",
+    "content_type": 10,
+    "codename": "delete_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 40,
+  "fields": {
+    "name": "Can view user",
+    "content_type": 10,
+    "codename": "view_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 41,
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": 11,
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 42,
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": 11,
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 43,
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": 11,
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 44,
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": 11,
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 45,
+  "fields": {
+    "name": "Can add permission",
+    "content_type": 12,
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 46,
+  "fields": {
+    "name": "Can change permission",
+    "content_type": 12,
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 47,
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": 12,
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 48,
+  "fields": {
+    "name": "Can view permission",
+    "content_type": 12,
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 49,
+  "fields": {
+    "name": "Can add group",
+    "content_type": 13,
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 50,
+  "fields": {
+    "name": "Can change group",
+    "content_type": 13,
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 51,
+  "fields": {
+    "name": "Can delete group",
+    "content_type": 13,
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 52,
+  "fields": {
+    "name": "Can view group",
+    "content_type": 13,
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 53,
+  "fields": {
+    "name": "Can add content type",
+    "content_type": 14,
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 54,
+  "fields": {
+    "name": "Can change content type",
+    "content_type": 14,
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 55,
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": 14,
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 56,
+  "fields": {
+    "name": "Can view content type",
+    "content_type": 14,
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 57,
+  "fields": {
+    "name": "Can add session",
+    "content_type": 15,
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 58,
+  "fields": {
+    "name": "Can change session",
+    "content_type": 15,
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 59,
+  "fields": {
+    "name": "Can delete session",
+    "content_type": 15,
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 60,
+  "fields": {
+    "name": "Can view session",
+    "content_type": 15,
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 61,
+  "fields": {
+    "name": "Can add site",
+    "content_type": 16,
+    "codename": "add_site"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 62,
+  "fields": {
+    "name": "Can change site",
+    "content_type": 16,
+    "codename": "change_site"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 63,
+  "fields": {
+    "name": "Can delete site",
+    "content_type": 16,
+    "codename": "delete_site"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 64,
+  "fields": {
+    "name": "Can view site",
+    "content_type": 16,
+    "codename": "view_site"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 1,
+  "fields": {
+    "app_label": "core",
+    "model": "chat"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 2,
+  "fields": {
+    "app_label": "core",
+    "model": "calificacionchat"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 3,
+  "fields": {
+    "app_label": "core",
+    "model": "mensaje"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 4,
+  "fields": {
+    "app_label": "core",
+    "model": "perfil"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 5,
+  "fields": {
+    "app_label": "core",
+    "model": "publicacion"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 6,
+  "fields": {
+    "app_label": "core",
+    "model": "notificacion"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 7,
+  "fields": {
+    "app_label": "core",
+    "model": "reporte"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 8,
+  "fields": {
+    "app_label": "core",
+    "model": "chatparticipante"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 9,
+  "fields": {
+    "app_label": "core",
+    "model": "consentimiento"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 10,
+  "fields": {
+    "app_label": "accounts",
+    "model": "user"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 11,
+  "fields": {
+    "app_label": "admin",
+    "model": "logentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 12,
+  "fields": {
+    "app_label": "auth",
+    "model": "permission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 13,
+  "fields": {
+    "app_label": "auth",
+    "model": "group"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 14,
+  "fields": {
+    "app_label": "contenttypes",
+    "model": "contenttype"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 15,
+  "fields": {
+    "app_label": "sessions",
+    "model": "session"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 16,
+  "fields": {
+    "app_label": "sites",
+    "model": "site"
+  }
+},
+{
+  "model": "sites.site",
+  "pk": 1,
+  "fields": {
+    "domain": "localhost:5173",
+    "name": "Inter-U"
+  }
+}
+]

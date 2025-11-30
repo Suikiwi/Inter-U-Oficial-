@@ -1,6 +1,10 @@
 
 SITE_ID = 1
 X_FRAME_OPTIONS = 'DENY'
+from dotenv import load_dotenv
+load_dotenv()
+def env(key, default=None):
+    return os.environ.get(key, default)
 
 from pathlib import Path
 from datetime import timedelta
@@ -87,8 +91,12 @@ TEMPLATES = [
 # ==================== DATABASE ====================
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': env('DJANGO_DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': env('DJANGO_DB_NAME', BASE_DIR / 'db.sqlite3'),
+        'USER': env('DJANGO_DB_USER', ''),
+        'PASSWORD': env('DJANGO_DB_PASSWORD', ''),
+        'HOST': env('DJANGO_DB_HOST', ''),
+        'PORT': env('DJANGO_DB_PORT', ''),
     }
 }
 
