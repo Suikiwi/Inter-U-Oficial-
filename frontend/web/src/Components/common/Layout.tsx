@@ -16,13 +16,14 @@ export const Layout: React.FC<LayoutProps> = ({
   centerContent = false,
 }) => {
   const location = useLocation();
-  const token = !!localStorage.getItem("accessToken");
 
-  // Redirección condicional del logo
-  const logoRedirect =
-    location.pathname.includes("/perfil") || location.pathname.includes("/chat")
-      ? "/feed"
-      : "/";
+  // Detecta rutas de chat o perfil de forma robusta (ej. /chat/123, /perfil, /perfil/editar)
+  const isChatOrPerfil = /^\/(perfil|chat)(\/|$)/.test(location.pathname);
+
+  // Redirección condicional del logo:
+  // - Si estás en chat o perfil, lleva a /feed
+  // - En cualquier otra ruta, al home /
+  const logoRedirect = isChatOrPerfil ? "/feed" : "/";
 
   return (
     <div className="bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen flex flex-col relative overflow-x-hidden">

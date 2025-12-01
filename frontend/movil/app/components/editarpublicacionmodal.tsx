@@ -17,11 +17,12 @@ type Publication = {
   descripcion?: string;
   habilidades_buscadas?: string[];
   habilidades_ofrecidas?: string[];
-  autor_alias?: string;
+  estado?: boolean;
   fecha_creacion?: string;
 };
 
 interface Props {
+  isOpen: boolean;
   publicacion: Publication;
   onClose: () => void;
   onUpdated: () => void;
@@ -34,27 +35,42 @@ export default function EditarPublicacionModal({
 }: Props) {
   const [titulo, setTitulo] = useState(publicacion.titulo);
   const [descripcion, setDescripcion] = useState(publicacion.descripcion || "");
-  const [habilidadesText, setHabilidadesText] = useState(
+  const [habilidadesBuscadasText, setHabilidadesBuscadasText] = useState(
     publicacion.habilidades_buscadas?.join(", ") || ""
   );
+  const [habilidadesOfrecidasText, setHabilidadesOfrecidasText] = useState(
+    publicacion.habilidades_ofrecidas?.join(", ") || ""
+  );
+  const [estado, setEstado] = useState(publicacion.estado ?? true);
 
   const handleSave = async () => {
     try {
-      const habilidades_buscadas = habilidadesText
+      const habilidades_buscadas = habilidadesBuscadasText
         .split(",")
-        .map((s: string) => s.trim()) 
-        .filter((s: string) => s.length > 0);
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
 
-      await editarPublicacion(publicacion.id_publicacion, {
+      const habilidades_ofrecidas = habilidadesOfrecidasText
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+
+      const payload = {
         titulo,
         descripcion,
         habilidades_buscadas,
-      });
+        habilidades_ofrecidas,
+        estado,
+      };
 
-      Alert.alert( "Publicación actualizada correctamente");
+      console.log("Payload enviado:", payload);
+
+      await editarPublicacion(publicacion.id_publicacion, payload);
+
+      Alert.alert("Publicación actualizada correctamente");
       onUpdated();
-    } catch (error) {
-      console.error("Error al editar publicación:", error);
+    } catch (error: any) {
+      console.error("Error al editar publicación:", error.response?.data || error);
       Alert.alert("Error", "No se pudo editar la publicación.");
     }
   };
@@ -81,9 +97,17 @@ export default function EditarPublicacionModal({
         />
         <TextInput
           style={styles.input}
-          value={habilidadesText}
-          onChangeText={setHabilidadesText}
-          placeholder="Habilidades (coma)"
+          value={habilidadesBuscadasText}
+          onChangeText={setHabilidadesBuscadasText}
+          placeholder="Habilidades buscadas (coma)"
+          placeholderTextColor="#888"
+          multiline
+        />
+        <TextInput
+          style={styles.input}
+          value={habilidadesOfrecidasText}
+          onChangeText={setHabilidadesOfrecidasText}
+          placeholder="Habilidades ofrecidas (coma)"
           placeholderTextColor="#888"
           multiline
         />

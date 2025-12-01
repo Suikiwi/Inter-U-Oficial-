@@ -156,6 +156,29 @@ class ChatDetailView(generics.RetrieveAPIView):
         if not ChatParticipante.objects.filter(chat=chat, estudiante=request.user).exists():
             return Response({'detalle': 'No autorizado.'}, status=403)
         return Response(ChatSerializer(chat).data, status=200)
+    
+class IniciarChatView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, publicacion_id):
+        publicacion = get_object_or_404(Publicacion, id_publicacion=publicacion_id)
+
+        # Buscar si ya existe un chat entre el usuario y el dueño de la publicación
+        chat_existente = Chat.objects.filter(
+            publicacion_id=publicacion.id_publicacion,
+            participantes__estudiante=request.user
+        ).first()
+
+        if chat_existente:
+            return Response(ChatSerializer(chat_existente).data)
+
+        # Crear nuevo chat
+        chat = Chat.objects.create(publicacion=publicacion, titulo=publicacion.titulo)
+        ChatParticipante.objects.create(chat=chat, estudiante=request.user)
+        ChatParticipante.objects.create(chat=chat, estudiante=publicacion.estudiante)
+
+        return Response(ChatSerializer(chat).data, status=status.HTTP_201_CREATED)
+
 
 
 class CompletarIntercambioView(generics.UpdateAPIView):
@@ -168,28 +191,30 @@ class CompletarIntercambioView(generics.UpdateAPIView):
         estudiante = request.user
         chat = self.get_object()
 
-        es_autor = ChatParticipante.objects.filter(
-            chat=chat, estudiante=estudiante, rol='autor'
+        # Validar que el usuario sea participante del chat
+        es_participante = ChatParticipante.objects.filter(
+            chat=chat, estudiante=estudiante
         ).exists()
-        if not es_autor:
+        if not es_participante:
             raise PermissionDenied(
-                {"chat": ["Solo el autor puede completar el intercambio."]}
+                {"chat": ["Solo los participantes pueden completar el intercambio."]}
             )
 
+        # Marcar el intercambio como finalizado
         chat.estado_intercambio = True
         chat.save()
 
-        receptores = ChatParticipante.objects.filter(chat=chat).exclude(estudiante=estudiante)
-        for receptor in receptores:
+        # Notificar al otro participante para que califique
+        otros = ChatParticipante.objects.filter(chat=chat).exclude(estudiante=estudiante)
+        for otro in otros:
             crear_notificacion(
-            usuario=otro.estudiante,
-            tipo='calificacion_chat',
-            chat=chat,
-            calificacion=calificacion
-)
-
+                usuario=otro.estudiante,
+                tipo="calificacion_chat",
+                chat=chat
+            )
 
         return Response(ChatSerializer(chat).data, status=200)
+
 
 
 
@@ -248,41 +273,34 @@ class CalificacionChatCreateView(generics.CreateAPIView):
         evaluador = request.user
         chat_id = request.data.get('chat')
         if not chat_id:
-            raise serializers.ValidationError(
-                {"chat": ["Este campo es requerido."]}
-            )
+            raise serializers.ValidationError({"chat": ["Este campo es requerido."]})
 
         chat = get_object_or_404(Chat, pk=chat_id)
+
+        # Validar participación en el chat
         if not ChatParticipante.objects.filter(chat=chat, estudiante=evaluador).exists():
-            raise PermissionDenied(
-                {"chat": ["No eres participante de este chat."]}
-            )
+            raise PermissionDenied({"chat": ["No eres participante de este chat."]})
 
+        # Evitar duplicado de calificación del mismo evaluador
         if CalificacionChat.objects.filter(chat=chat, evaluador=evaluador).exists():
-            raise serializers.ValidationError(
-                {"chat": ["Ya has calificado este chat."]}
+            raise serializers.ValidationError({"chat": ["Ya has calificado este chat."]})
+
+        serializer = self.get_serializer(data=request.data, context={'evaluador': evaluador})
+        serializer.is_valid(raise_exception=True)
+        calificacion = serializer.save()
+
+        # Notificar al otro participante
+        otros = ChatParticipante.objects.filter(chat=chat).exclude(estudiante=evaluador)
+        for otro in otros:
+            crear_notificacion(
+                usuario=otro.estudiante,
+                tipo='calificacion_chat',
+                chat=chat,
+                calificacion=calificacion
             )
 
-        puntaje = request.data.get('puntaje')
-        comentario = request.data.get('comentario', '')
-
-        calificacion = CalificacionChat.objects.create(
-            chat=chat,
-            evaluador=evaluador,
-            puntaje=puntaje,
-            comentario=comentario
-        )
-
-        for otro in ChatParticipante.objects.filter(chat=chat).exclude(estudiante=evaluador):
-         crear_notificacion(
-    usuario=otro.estudiante,
-    tipo='calificacion_chat',
-    chat=chat,
-    calificacion=calificacion
-)
-
-
-        return Response(CalificacionChatSerializer(calificacion).data, status=201)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
     
     User = get_user_model()
 
@@ -300,7 +318,38 @@ class CalificacionesRecibidasView(generics.ListAPIView):
         # Buscar calificaciones hechas por otros en esos chats
         return CalificacionChat.objects.filter(chat_id__in=chats_donde_participa).exclude(evaluador=usuario)
 
+class CalificacionesRecibidasPorUsuarioView(generics.ListAPIView):
+    serializer_class = CalificacionChatSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        usuario_id = self.kwargs.get("pk")
+        usuario = get_object_or_404(User, pk=usuario_id)
+
+        # Chats donde participa este usuario
+        chats_donde_participa = ChatParticipante.objects.filter(
+            estudiante=usuario
+        ).values_list("chat_id", flat=True)
+
+        # Calificaciones hechas por otros en esos chats (recibidas)
+        return CalificacionChat.objects.filter(chat_id__in=chats_donde_participa).exclude(evaluador=usuario)
+
+
+# Si tu frontend consume por perfil y no por usuario, agrega esta vista:
+class CalificacionesRecibidasPorPerfilView(generics.ListAPIView):
+    serializer_class = CalificacionChatSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        perfil_id = self.kwargs.get("perfil_id")
+        perfil = get_object_or_404(Perfil, pk=perfil_id)
+        usuario = perfil.usuario  # o perfil.estudiante según tu relación
+
+        chats_donde_participa = ChatParticipante.objects.filter(
+            estudiante=usuario
+        ).values_list("chat_id", flat=True)
+
+        return CalificacionChat.objects.filter(chat_id__in=chats_donde_participa).exclude(evaluador=usuario)
 
 # ----------------------- NOTIFICACIONES -----------------------
 

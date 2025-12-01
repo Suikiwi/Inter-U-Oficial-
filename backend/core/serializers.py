@@ -49,9 +49,9 @@ class PerfilCompletoSerializer(serializers.ModelSerializer):
             'area',
             'biografia',
             'foto',
-            'habilidades_ofrecidas', # ahora lista
+            'habilidades_ofrecidas',
         ]
-        read_only_fields = ['id_perfil']
+        read_only_fields = ['id_perfil', 'estudiante'] 
 
 
 class ConfirmarEliminarCuentaSerializer(serializers.Serializer):
@@ -65,6 +65,7 @@ class PublicacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Publicacion
         fields = '__all__'
+        read_only_fields = ['estudiante']  # ← aquí el cambio
 
     def get_autor_alias(self, obj):
         perfil = getattr(obj.estudiante, "perfil", None)
@@ -91,6 +92,7 @@ class PublicacionSerializer(serializers.ModelSerializer):
             habilidades_ofrecidas=perfil.habilidades_ofrecidas,
             habilidades_buscadas=validated_data['habilidades_buscadas'],
         )
+
 
 class ChatParticipanteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -119,12 +121,25 @@ class CalificacionChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = CalificacionChat
         fields = '__all__'
-        read_only_fields = ['id_calificacion', 'fecha']
+        read_only_fields = ['id_calificacion', 'fecha', 'evaluador']  # evaluador se setea en backend
 
     def validate_puntaje(self, value):
+        # Asegurar que value sea int (por si llega como string)
+        try:
+            value = int(value)
+        except (TypeError, ValueError):
+            raise serializers.ValidationError("El puntaje debe ser un entero entre 1 y 5.")
         if value < 1 or value > 5:
             raise serializers.ValidationError("El puntaje debe estar entre 1 y 5.")
         return value
+
+    def create(self, validated_data):
+        # Evaluador viene del contexto o de la vista
+        evaluador = self.context.get('evaluador')
+        if evaluador is None:
+            raise serializers.ValidationError({"evaluador": ["No se pudo determinar el evaluador."]})
+        validated_data['evaluador'] = evaluador
+        return super().create(validated_data)
 
 
 class ChatSerializer(serializers.ModelSerializer):

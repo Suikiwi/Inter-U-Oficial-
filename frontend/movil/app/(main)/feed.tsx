@@ -1,4 +1,3 @@
-// app/(main)/feed.tsx
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -13,9 +12,9 @@ import {
 import {
   obtenerPublicacionesGlobal,
   getPerfil,
-  iniciarChat as apiIniciarChat,
+  iniciarChat,
   eliminarPublicacion,
-} from "../api";
+} from "../api.js";
 import ChatScreen from "../components/chat";
 import EditarPublicacionModal from "../components/editarpublicacionmodal";
 import CrearReporteModal from "../components/CrearReporteModal";
@@ -23,7 +22,7 @@ import PerfilModal from "../components/PerfilModal";
 
 type Publication = {
   id_publicacion: number;
-  estudiante: number; // id del usuario dueño de la publicación
+  estudiante: number;
   titulo: string;
   descripcion?: string;
   habilidades_buscadas?: string[];
@@ -34,10 +33,11 @@ type Publication = {
 
 export default function FeedScreen() {
   const [publicaciones, setPublicaciones] = useState<Publication[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [userId, setUserId] = useState<number | null>(null);
 
   const [chatId, setChatId] = useState<number | null>(null);
+  const [editOpen, setEditOpen] = useState<boolean>(false);
   const [editPub, setEditPub] = useState<Publication | null>(null);
   const [reporteContext, setReporteContext] = useState<{ publicacionId?: number } | null>(null);
   const [perfilId, setPerfilId] = useState<number | null>(null);
@@ -47,7 +47,11 @@ export default function FeedScreen() {
       setLoading(true);
       try {
         const perfil = await getPerfil();
-        setUserId(perfil.estudiante);
+        const estudianteId =
+          typeof perfil.estudiante === "number"
+            ? perfil.estudiante
+            : perfil.estudiante?.id ?? perfil.estudiante_id;
+        setUserId(estudianteId ?? null);
 
         const data: Publication[] = await obtenerPublicacionesGlobal();
         setPublicaciones(data);
@@ -75,12 +79,36 @@ export default function FeedScreen() {
 
   const handleIniciarChat = async (id_publicacion: number) => {
     try {
-      const chat = await apiIniciarChat(id_publicacion);
-      setChatId(chat.id_chat);
+      const chat = await iniciarChat(id_publicacion);
+      const cid = chat.id_chat ?? chat.id ?? null;
+      if (!cid) {
+        Alert.alert("Error", "No se pudo abrir el chat.");
+        return;
+      }
+      setChatId(cid);
     } catch (err) {
       console.error("Error al iniciar chat:", err);
       Alert.alert("Error", "No se pudo iniciar el chat.");
     }
+  };
+
+  const handleEditarClick = (item: Publication) => {
+    setEditPub(item);
+    setEditOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setEditOpen(false);
+    setEditPub(null);
+  };
+
+  const handleEditUpdated = (updated?: Publication) => {
+    if (updated && updated.id_publicacion) {
+      setPublicaciones((prev) =>
+        prev.map((p) => (p.id_publicacion === updated.id_publicacion ? { ...p, ...updated } : p))
+      );
+    }
+    handleEditClose();
   };
 
   const renderItem = ({ item }: { item: Publication }) => {
@@ -113,7 +141,7 @@ export default function FeedScreen() {
         <View style={styles.buttonRow}>
           {esPropietario ? (
             <>
-              <TouchableOpacity style={styles.purpleButton} onPress={() => setEditPub(item)}>
+              <TouchableOpacity style={styles.purpleButton} onPress={() => handleEditarClick(item)}>
                 <Text style={styles.buttonText}>Editar</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -150,7 +178,7 @@ export default function FeedScreen() {
       {loading ? (
         <ActivityIndicator color="#8A4FFF" />
       ) : (
-        <FlatList
+        <FlatList<Publication>
           data={publicaciones}
           keyExtractor={(item) => String(item.id_publicacion)}
           renderItem={renderItem}
@@ -158,21 +186,22 @@ export default function FeedScreen() {
         />
       )}
 
-      {/* Modales */}
+      {/* Chat modal */}
       <Modal visible={chatId !== null} animationType="slide">
         {chatId && <ChatScreen id={chatId} onClose={() => setChatId(null)} />}
       </Modal>
 
-      <Modal visible={editPub !== null} animationType="slide">
-        {editPub && (
-          <EditarPublicacionModal
-            publicacion={editPub}
-            onClose={() => setEditPub(null)}
-            onUpdated={() => setEditPub(null)}
-          />
-        )}
-      </Modal>
+      {/* Editar publicación */}
+      {editPub && (
+        <EditarPublicacionModal
+          isOpen={editOpen}
+          publicacion={editPub}
+          onClose={handleEditClose}
+          onUpdated={handleEditUpdated}
+        />
+      )}
 
+      {/* Reporte modal */}
       <Modal visible={reporteContext !== null} animationType="slide">
         {reporteContext && (
           <CrearReporteModal
@@ -182,6 +211,7 @@ export default function FeedScreen() {
         )}
       </Modal>
 
+      {/* Perfil modal */}
       <Modal visible={perfilId !== null} animationType="fade" transparent>
         {perfilId && <PerfilModal id={perfilId} onClose={() => setPerfilId(null)} />}
       </Modal>

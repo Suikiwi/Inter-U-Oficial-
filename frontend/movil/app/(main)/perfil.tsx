@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Image,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import api, { getPerfil, updatePerfil, logoutUser } from "../api";
@@ -33,12 +34,22 @@ export default function ProfileScreen() {
   useEffect(() => {
     const fetchProfileAndRatings = async () => {
       try {
-        const data = await getPerfil(); // PerfilCompletoSerializer
+        const data = await getPerfil();
         setUser(data);
 
-        if (data?.id_perfil) {
-          const res = await api.get<Calificacion[]>(`/perfil/${data.id_perfil}/calificaciones/`);
+        // Obtener el id de usuario (según tu serializer puede ser estudiante o usuario_id)
+        const userId = data?.estudiante ?? data?.usuario_id ?? null;
+
+        if (userId) {
+          // Endpoint por usuario → calificaciones recibidas
+          const res = await api.get<Calificacion[]>(`/usuarios/${userId}/calificaciones/`);
           setCalificaciones(res.data);
+        } else if (data?.id_perfil) {
+          // Fallback opcional → endpoint por perfil si lo tienes registrado
+          const res = await api.get<Calificacion[]>(`/perfil/${data.id_perfil}/calificaciones-recibidas/`);
+          setCalificaciones(res.data);
+        } else {
+          setCalificaciones([]);
         }
       } catch (err: any) {
         setError("Error al cargar el perfil");
@@ -56,10 +67,22 @@ export default function ProfileScreen() {
 
   const handleUpdateProfile = async (data: Partial<any>) => {
     try {
+      // Validación defensiva
+      if (!data.nombre || !data.apellido || !data.carrera || !data.area) {
+        Alert.alert("Error", "Debes completar todos los campos obligatorios.");
+        return;
+      }
+
+      if (!Array.isArray(data.habilidades_ofrecidas)) {
+        data.habilidades_ofrecidas = [];
+      }
+
       const updatedUser = await updatePerfil(data);
       setUser(updatedUser);
-    } catch (error) {
-      console.error("Error al actualizar perfil:", error);
+      setShowEditModal(false);
+    } catch (error: any) {
+      console.error("Error al actualizar perfil:", error.response?.data || error);
+      Alert.alert("Error", "No se pudo actualizar el perfil. Revisa los campos e intenta nuevamente.");
     }
   };
 
@@ -82,7 +105,6 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Encabezado */}
       <View style={styles.header}>
         <Text style={styles.title}>Perfil</Text>
         <TouchableOpacity style={styles.purpleButton} onPress={handleLogout}>
@@ -90,7 +112,6 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Tarjeta de perfil */}
       <View style={styles.profileCard}>
         {user?.foto ? (
           <Image source={{ uri: user.foto }} style={styles.avatar} />
@@ -110,14 +131,12 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Información completa */}
       <View style={styles.infoCard}>
         <Text style={styles.sectionTitle}>Información completa</Text>
         <Text style={styles.info}>Carrera: {user?.carrera}</Text>
         <Text style={styles.info}>Área: {user?.area}</Text>
         <Text style={styles.info}>Biografía: {user?.biografia}</Text>
 
-        {/* Habilidades ofrecidas */}
         {user?.habilidades_ofrecidas?.length > 0 && (
           <View style={{ marginTop: 10 }}>
             <Text style={styles.sectionTitle}>Habilidades ofrecidas</Text>
@@ -128,7 +147,6 @@ export default function ProfileScreen() {
         )}
       </View>
 
-      {/* Calificaciones recibidas */}
       <View style={styles.infoCard}>
         <Text style={styles.sectionTitle}>Calificaciones recibidas</Text>
         {calificaciones.length === 0 ? (
@@ -145,10 +163,8 @@ export default function ProfileScreen() {
         )}
       </View>
 
-      {/* Publicaciones del usuario */}
       <MisPublicaciones />
 
-      {/* Modal de edición de perfil */}
       <EditProfileModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}

@@ -67,7 +67,7 @@ export default function MensajesScreen() {
           {item.autor_alias ? `${item.autor_alias} — ${item.titulo}` : item.titulo}
         </Text>
         <Text style={styles.estado}>
-          {item.estado_intercambio ? "✅ Finalizado" : "⏳ En curso"}
+          {item.estado_intercambio ? " Finalizado" : " En curso"}
         </Text>
         {item.ultimo_mensaje && (
           <Text style={styles.ultimo} numberOfLines={1}>

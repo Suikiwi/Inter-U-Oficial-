@@ -45,3 +45,10 @@ admin.is_superuser = False      # no es superusuario global
 admin.save()
 
 
+
+app movil revisar problemas en editar perfil y publicacion 
+arreglar ñ y tildes 
+revisar modal de estado 
+
+
+

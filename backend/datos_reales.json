@@ -7,7 +7,7 @@
     "alias": "kimi",
     "nombre": "Kimi",
     "apellido": "kokoa",
-    "carrera": "IngenierÝa en Conectividad y Redes",
+    "carrera": "Ingeniería en Conectividad y Redes",
     "area": "Redes y Telecomunicaciones",
     "biografia": "waos",
     "foto": "",
@@ -22,10 +22,10 @@
   "pk": 2,
   "fields": {
     "estudiante": 1,
-    "alias": "fe±a",
+    "alias": "feña",
     "nombre": "fernanda",
     "apellido": "del valle",
-    "carrera": "IngenierÝa en Informßtica",
+    "carrera": "Ingeniería en Informática",
     "area": "Redes y Telecomunicaciones",
     "biografia": "holi",
     "foto": "",
@@ -54,7 +54,7 @@
   "pk": 1,
   "fields": {
     "titulo": "Apuntes de Arquitectura SaaS",
-    "descripcion": "Material acadÚmico sobre arquitectura SaaS.",
+    "descripcion": "Material academico sobre arquitectura SaaS.",
     "habilidades_ofrecidas": [
       "Arquitectura SaaS"
     ],
@@ -70,8 +70,8 @@
   "model": "core.publicacion",
   "pk": 2,
   "fields": {
-    "titulo": "GuÝa de UX",
-    "descripcion": "Documentaci¾n sobre experiencia de usuario.",
+    "titulo": "Guía de UX",
+    "descripcion": "Documentación sobre experiencia de usuario.",
     "habilidades_ofrecidas": [
       "UX",
       "Figma"
@@ -88,8 +88,8 @@
   "model": "core.publicacion",
   "pk": 3,
   "fields": {
-    "titulo": "Investigaci¾n APIs",
-    "descripcion": "Ejemplos de documentaci¾n RESTful y OpenAPI.",
+    "titulo": "Investigación APIs",
+    "descripcion": "Ejemplos de documentación RESTful y OpenAPI.",
     "habilidades_ofrecidas": [
       "APIs",
       "OpenAPI"
@@ -107,7 +107,7 @@
   "pk": 4,
   "fields": {
     "titulo": "Apuntes de Figma",
-    "descripcion": "Recursos para dise±o de interfaces y prototipado.",
+    "descripcion": "Recursos para diseño de interfaces y prototipado.",
     "habilidades_ofrecidas": [
       "Figma",
       "UI Design"
@@ -142,10 +142,10 @@
   "model": "core.publicacion",
   "pk": 6,
   "fields": {
-    "titulo": "Documentaci¾n de Proyecto",
-    "descripcion": "Notas y reportes del proyecto acadÚmico.",
+    "titulo": "Documentación de Proyecto",
+    "descripcion": "Notas y reportes del proyecto academico.",
     "habilidades_ofrecidas": [
-      "Documentaci¾n",
+      "Documentación",
       "Reportes"
     ],
     "habilidades_buscadas": [
@@ -160,7 +160,7 @@
   "model": "core.publicacion",
   "pk": 7,
   "fields": {
-    "titulo": "Busco ayuda urgente para inglÚs",
+    "titulo": "Busco ayuda urgente para ingles",
     "descripcion": "tengo prueba la proxima semana, soy buena en matematicas",
     "habilidades_ofrecidas": [
       "react"
@@ -248,7 +248,7 @@
     "fecha_inicio": "2025-11-25T02:49:03.154Z",
     "estado_intercambio": false,
     "publicacion": 6,
-    "titulo": "Chat sobre Documentaci¾n"
+    "titulo": "Chat sobre Documentación"
   }
 },
 {
@@ -692,7 +692,7 @@
   "model": "core.mensaje",
   "pk": 8,
   "fields": {
-    "texto": "C¾mo estas",
+    "texto": "Cómo estas",
     "fecha": "2025-11-26T20:50:18.569Z",
     "chat": 13,
     "estudiante": 2,
@@ -725,7 +725,7 @@
   "model": "core.mensaje",
   "pk": 11,
   "fields": {
-    "texto": "Por quÚ ",
+    "texto": "Por quí ",
     "fecha": "2025-11-26T21:37:34.702Z",
     "chat": 1,
     "estudiante": 2,
@@ -858,7 +858,7 @@
   "model": "core.notificacion",
   "pk": 5,
   "fields": {
-    "mensaje": "alicia.norambuena@inacapmail.cl calific¾ el chat 'Chat sobre Arquitectura SaaS'",
+    "mensaje": "alicia.norambuena@inacapmail.cl calificó el chat 'Chat sobre Arquitectura SaaS'",
     "tipo": "calificacion_chat",
     "fecha": "2025-11-25T02:56:12.125Z",
     "leida": false,
@@ -872,7 +872,7 @@
   "model": "core.notificacion",
   "pk": 6,
   "fields": {
-    "mensaje": "fe±a calific¾ el chat 'Chat sobre Arquitectura SaaS'",
+    "mensaje": "feña calificó el chat 'Chat sobre Arquitectura SaaS'",
     "tipo": "calificacion_chat",
     "fecha": "2025-11-25T02:56:52.542Z",
     "leida": false,
@@ -914,7 +914,7 @@
   "model": "core.notificacion",
   "pk": 9,
   "fields": {
-    "mensaje": "fe±a calific¾ el chat 'Chat sobre Arquitectura SaaS'",
+    "mensaje": "feña calificó el chat 'Chat sobre Arquitectura SaaS'",
     "tipo": "calificacion_chat",
     "fecha": "2025-11-25T21:10:26.103Z",
     "leida": false,
@@ -928,7 +928,7 @@
   "model": "core.notificacion",
   "pk": 10,
   "fields": {
-    "mensaje": "fe±a calific¾ el chat 'Chat sobre Arquitectura SaaS'",
+    "mensaje": "feña calificó el chat 'Chat sobre Arquitectura SaaS'",
     "tipo": "calificacion_chat",
     "fecha": "2025-11-26T19:07:44.196Z",
     "leida": false,
@@ -1152,7 +1152,7 @@
   "model": "core.reporte",
   "pk": 1,
   "fields": {
-    "motivo": "no me gusta esta publicaci¾n creo que infringe las normas",
+    "motivo": "no me gusta esta publicación creo que infringe las normas",
     "fecha": "2025-11-25T02:52:15.317Z",
     "estado": 2,
     "administrador": null,

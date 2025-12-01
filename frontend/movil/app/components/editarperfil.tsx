@@ -8,17 +8,18 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
 type PerfilData = {
   nombre?: string;
   apellido?: string;
-  alias?: string;
+  alias?: string | null;       // ← acepta null
   carrera?: string;
   area?: string;
-  biografia?: string;
-  foto?: string;
+  biografia?: string | null;   // ← acepta null
+  foto?: string | null;        // ← acepta null
   habilidades_ofrecidas?: string[];
 };
 
@@ -63,26 +64,52 @@ export default function EditProfileModal({ isOpen, onClose, perfil, onSave }: Pr
       setFormData({
         nombre: perfil.nombre || "",
         apellido: perfil.apellido || "",
-        alias: perfil.alias || "",
+        alias: perfil.alias ?? null,         // preserva null
         carrera: perfil.carrera || "",
         area: perfil.area || "",
-        biografia: perfil.biografia || "",
-        foto: perfil.foto || "",
-        habilidades_ofrecidas: perfil.habilidades_ofrecidas || [],
+        biografia: perfil.biografia ?? null, // preserva null
+        foto: perfil.foto ?? null,           // preserva null
       });
       setHabilidadesText((perfil.habilidades_ofrecidas || []).join(", "));
     }
   }, [perfil]);
 
   const handleSave = async () => {
+    const habilidadesArray = habilidadesText
+      .split(",")
+      .map((h) => h.trim())
+      .filter((h) => h.length > 0);
+
+    const payload: Partial<PerfilData> = {
+      nombre: formData.nombre?.trim(),
+      apellido: formData.apellido?.trim(),
+      carrera: formData.carrera?.trim(),
+      area: formData.area?.trim(),
+      alias: formData.alias?.trim?.() ?? null,        // string | null
+      biografia: formData.biografia?.trim?.() ?? null,// string | null
+      foto: formData.foto?.trim?.() ?? null,          // string | null
+      habilidades_ofrecidas: habilidadesArray,
+    };
+
+    if (!payload.nombre || !payload.apellido || !payload.carrera || !payload.area) {
+      Alert.alert("Error", "Debes completar todos los campos obligatorios.");
+      return;
+    }
+
     setSaving(true);
     try {
-      const habilidadesArray = habilidadesText
-        .split(",")
-        .map((h) => h.trim())
-        .filter((h) => h.length > 0);
-      await onSave({ ...formData, habilidades_ofrecidas: habilidadesArray });
+      await onSave(payload);
       onClose();
+    } catch (error: any) {
+      console.error("Error al guardar perfil:", error.response?.data || error);
+      Alert.alert(
+        "Error",
+        error.response?.data
+          ? Object.entries(error.response.data)
+              .map(([key, val]) => `${key}: ${(val as string[]).join(", ")}`)
+              .join("\n")
+          : "No se pudo actualizar el perfil. Revisa los campos e intenta nuevamente."
+      );
     } finally {
       setSaving(false);
     }
@@ -98,28 +125,27 @@ export default function EditProfileModal({ isOpen, onClose, perfil, onSave }: Pr
               style={styles.input}
               placeholder="Nombre"
               placeholderTextColor="#bbb"
-              value={formData.nombre}
+              value={formData.nombre ?? ""}
               onChangeText={(text) => setFormData({ ...formData, nombre: text })}
             />
             <TextInput
               style={styles.input}
               placeholder="Apellido"
               placeholderTextColor="#bbb"
-              value={formData.apellido}
+              value={formData.apellido ?? ""}
               onChangeText={(text) => setFormData({ ...formData, apellido: text })}
             />
             <TextInput
               style={styles.input}
               placeholder="Alias (público)"
               placeholderTextColor="#bbb"
-              value={formData.alias}
+              value={formData.alias ?? ""} // mostrar vacío si es null
               onChangeText={(text) => setFormData({ ...formData, alias: text })}
             />
 
-            {/* Picker de Carrera */}
             <Text style={styles.label}>Carrera</Text>
             <Picker
-              selectedValue={formData.carrera}
+              selectedValue={formData.carrera ?? ""}
               onValueChange={(itemValue) => setFormData({ ...formData, carrera: itemValue })}
               style={styles.picker}
             >
@@ -129,10 +155,9 @@ export default function EditProfileModal({ isOpen, onClose, perfil, onSave }: Pr
               ))}
             </Picker>
 
-            {/* Picker de Área */}
             <Text style={styles.label}>Área</Text>
             <Picker
-              selectedValue={formData.area}
+              selectedValue={formData.area ?? ""}
               onValueChange={(itemValue) => setFormData({ ...formData, area: itemValue })}
               style={styles.picker}
             >
@@ -146,7 +171,7 @@ export default function EditProfileModal({ isOpen, onClose, perfil, onSave }: Pr
               style={styles.input}
               placeholder="Biografía"
               placeholderTextColor="#bbb"
-              value={formData.biografia}
+              value={formData.biografia ?? ""}
               onChangeText={(text) => setFormData({ ...formData, biografia: text })}
               multiline
             />
@@ -154,7 +179,7 @@ export default function EditProfileModal({ isOpen, onClose, perfil, onSave }: Pr
               style={styles.input}
               placeholder="URL de foto"
               placeholderTextColor="#bbb"
-              value={formData.foto}
+              value={formData.foto ?? ""}
               onChangeText={(text) => setFormData({ ...formData, foto: text })}
             />
             <TextInput
