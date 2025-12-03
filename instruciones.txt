@@ -46,9 +46,10 @@ admin.save()
 
 
 
-app movil revisar problemas en editar perfil y publicacion 
-arreglar ñ y tildes 
-revisar modal de estado 
 
+
+revisar doble envio 
+respuesta automatica sin refresh 
+revisar busqueda y mis publicaciones
 
 

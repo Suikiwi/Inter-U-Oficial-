@@ -24,19 +24,17 @@ const ChatPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
   const [nuevoMensaje, setNuevoMensaje] = useState("");
-  const [socket, setSocket] = useState<WebSocket | null>(null);
   const [chatInfo, setChatInfo] = useState<ChatInfo | null>(null);
   const userId = getUserIdFromAccessToken()!;
   const listRef = useRef<HTMLDivElement | null>(null);
+  const vistosRef = useRef<Set<number>>(new Set());
 
-  // Scroll al final cuando cambian los mensajes
   useEffect(() => {
     if (listRef.current) {
       listRef.current.scrollTop = listRef.current.scrollHeight;
     }
   }, [mensajes]);
 
-  // Cargar mensajes iniciales
   useEffect(() => {
     const fetchMensajes = async () => {
       try {
@@ -45,6 +43,7 @@ const ChatPage: React.FC = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMensajes(res.data);
+        vistosRef.current = new Set<number>(res.data.map((m: Mensaje) => m.id_mensaje));
       } catch (error) {
         console.error("Error al cargar mensajes:", error);
       }
@@ -52,7 +51,6 @@ const ChatPage: React.FC = () => {
     fetchMensajes();
   }, [id]);
 
-  // Cargar info del chat
   useEffect(() => {
     const fetchChatInfo = async () => {
       try {
@@ -68,67 +66,52 @@ const ChatPage: React.FC = () => {
     fetchChatInfo();
   }, [id]);
 
-  // WebSocket tiempo real
   useEffect(() => {
-    const ws = new WebSocket(`ws://127.0.0.1:8001/ws/chat/${id}/`);
-
-    ws.onopen = () => {
-      console.log("Conectado al WebSocket");
-    };
+    const ws = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${id}/`);
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      const nuevo: Mensaje = {
-        id_mensaje: Date.now(), // temporal en cliente
-        estudiante: userId,
-        texto: data.message,
-        fecha: new Date().toISOString(),
-        autor_alias: data.user, // el backend debe enviar alias aquí
-      };
-      setMensajes((prev) => [...prev, nuevo]);
+      if (data.type !== "message") return;
+
+      const idReal = data.id_mensaje;
+      if (typeof idReal !== "number") return;
+
+      // ✅ Ajuste: en vez de descartar siempre, verificamos en el array actual
+      setMensajes((prev) => {
+        if (prev.some((m) => m.id_mensaje === idReal)) {
+          return prev; // ya existe, no duplicar
+        }
+        return [...prev, {
+          id_mensaje: idReal,
+          estudiante: data.estudiante,
+          texto: data.texto,
+          fecha: data.fecha,
+          autor_alias: data.user,
+        }];
+      });
     };
 
-    ws.onclose = () => {
-      console.log("WebSocket cerrado");
-    };
+    ws.onopen = () => console.log("WS conectado");
+    ws.onclose = () => console.log("WS cerrado");
 
-    setSocket(ws);
+    return () => ws.close();
+  }, [id]);
 
-    return () => {
-      ws.close();
-    };
-  }, [id, userId]);
-
-  // Persistencia + tiempo real
   const enviarMensaje = async () => {
     if (nuevoMensaje.trim() === "") return;
 
     const token = localStorage.getItem("accessToken");
-    const payload = {
-      chat: parseInt(id!),
-      texto: nuevoMensaje,
-    };
+    const payload = { chat: parseInt(id!), texto: nuevoMensaje };
 
     try {
-      // Guardar en backend
-      const res = await axios.post(`${API_BASE_URL}/mensajes/`, payload, {
+      await axios.post(`${API_BASE_URL}/mensajes/`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-
-      // Opcional: insertar el mensaje guardado con datos reales (id, fecha, alias)
-      const guardado: Mensaje = res.data;
-      setMensajes((prev) => [...prev, guardado]);
-
-      // Enviar por WS para otros clientes
-      if (socket) {
-        const msg = { message: nuevoMensaje, user: "Yo" };
-        socket.send(JSON.stringify(msg));
-      }
-
       setNuevoMensaje("");
+      // No hacemos eco local: el backend emite el mensaje y llega por WS
     } catch (error) {
       console.error("Error al enviar mensaje:", error);
     }
@@ -143,7 +126,9 @@ const ChatPage: React.FC = () => {
         {chatInfo && (
           <span
             className={`text-xs px-2 py-1 rounded ${
-              chatInfo.estado_intercambio ? "bg-emerald-600/20 text-emerald-300" : "bg-amber-600/20 text-amber-300"
+              chatInfo.estado_intercambio
+                ? "bg-emerald-600/20 text-emerald-300"
+                : "bg-amber-600/20 text-amber-300"
             }`}
           >
             {chatInfo.estado_intercambio ? "Finalizado" : "En curso"}
@@ -151,7 +136,6 @@ const ChatPage: React.FC = () => {
         )}
       </div>
 
-      {/* Lista de mensajes */}
       <div
         ref={listRef}
         className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 h-[60vh] overflow-y-auto space-y-3"
@@ -179,11 +163,12 @@ const ChatPage: React.FC = () => {
           </div>
         ))}
         {mensajes.length === 0 && (
-          <div className="text-center text-slate-400 text-sm py-8">Aún no hay mensajes en este chat.</div>
+          <div className="text-center text-slate-400 text-sm py-8">
+            Aún no hay mensajes en este chat.
+          </div>
         )}
       </div>
 
-      {/* Input para enviar mensaje */}
       <div className="flex gap-2">
         <input
           type="text"
@@ -203,7 +188,6 @@ const ChatPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Estado del intercambio */}
       {chatInfo && (
         <EstadoIntercambio chatId={chatInfo.id_chat} estadoInicial={chatInfo.estado_intercambio} />
       )}

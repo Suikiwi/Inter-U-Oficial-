@@ -7,6 +7,8 @@ import requests
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from .models import (
     ChatParticipante, Publicacion, CalificacionChat,
@@ -238,7 +240,7 @@ class MensajeListCreateView(generics.ListCreateAPIView):
         if not chat_id:
             raise serializers.ValidationError({"chat": ["Este campo es requerido."]})
 
-        chat = get_object_or_404(Chat, pk=chat_id)
+        chat = get_object_or_404(Chat, pk=chat_id)  # Chat.pk == id_chat
         if not ChatParticipante.objects.filter(chat=chat, estudiante=remitente).exists():
             raise PermissionDenied({"chat": ["No eres participante de este chat."]})
 
@@ -248,14 +250,27 @@ class MensajeListCreateView(generics.ListCreateAPIView):
 
         mensaje = Mensaje.objects.create(chat=chat, estudiante=remitente, texto=texto)
 
-        # Notificar a los otros participantes
+        # Notificar a otros participantes (si lo usas)
         for otro in ChatParticipante.objects.filter(chat=chat).exclude(estudiante=remitente):
             crear_notificacion(
-            usuario=otro.estudiante,
-            tipo='nuevo_mensaje',
-            chat=chat
-)
+                usuario=otro.estudiante,
+                tipo='nuevo_mensaje',
+                chat=chat
+            )
 
+        # Emitir por WebSocket al grupo del chat (usar id_chat y id_mensaje)
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+    f"chat_{chat.id_chat}",
+    {
+            "type": "chat_message",  # <- debe coincidir con el nombre del método del consumer
+            "id_mensaje": mensaje.id_mensaje,
+            "texto": mensaje.texto,
+            "fecha": mensaje.fecha.isoformat(),
+            "estudiante": mensaje.estudiante.id,
+            "user": getattr(mensaje.estudiante, "alias", mensaje.estudiante.username),
+    }
+)
 
         return Response(MensajeSerializer(mensaje).data, status=201)
 

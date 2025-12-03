@@ -35,7 +35,7 @@ export default function MisPublicaciones() {
           try {
             await eliminarPublicacion(id);
             setItems((prev) => prev.filter((p) => p.id_publicacion !== id));
-            Alert.alert( "Publicación eliminada correctamente");
+            Alert.alert("Publicación eliminada correctamente");
           } catch (e) {
             Alert.alert("Error", "No se pudo eliminar la publicación.");
           }
@@ -79,6 +79,7 @@ export default function MisPublicaciones() {
 
       {selectedPub && (
         <EditarPublicacionModal
+          isOpen={true}
           publicacion={selectedPub}
           onClose={() => setSelectedPub(null)}
           onUpdated={async () => {

@@ -106,7 +106,7 @@ const HistorialChat: React.FC = () => {
                     {c.autor_alias ? `${c.autor_alias} — ${c.titulo}` : c.titulo}
                   </div>
                   <div className="text-xs text-slate-400 italic truncate">
-                    {c.estado_intercambio ? `✅ Finalizado — ${c.titulo}` : `⏳ En curso — ${c.titulo}`}
+                    {c.estado_intercambio ? ` Finalizado — ${c.titulo}` : ` En curso — ${c.titulo}`}
                   </div>
                   {c.ultimo_mensaje && (
                     <div className="text-xs text-slate-500 truncate mt-1">

@@ -1,29 +1,25 @@
+# consumers.py
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-        self.room_group_name = f"chat_{self.room_name}"
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        self.chat_id = self.scope["url_route"]["kwargs"]["chat_id"]
+        self.group_name = f"chat_{self.chat_id}"
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
-    async def receive(self, text_data):
-        data = json.loads(text_data)
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                "type": "chat_message",
-                "message": data["message"],
-                "user": data.get("user", "anon")
-            }
-        )
-
+    # Este nombre debe coincidir con "type": "chat_message" del view
     async def chat_message(self, event):
+        # Lo que se envía al cliente (payload) puede tener type "message" para tu frontend
         await self.send(text_data=json.dumps({
-            "message": event["message"],
-            "user": event["user"]
+            "type": "message",
+            "id_mensaje": event["id_mensaje"],
+            "texto": event["texto"],
+            "fecha": event["fecha"],
+            "estudiante": event["estudiante"],
+            "user": event["user"],
         }))
