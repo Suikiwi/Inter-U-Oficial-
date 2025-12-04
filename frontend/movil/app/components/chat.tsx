@@ -108,7 +108,7 @@ export default function ChatScreen({ id, onClose }: ChatScreenProps) {
 
   // WebSocket en tiempo real (usa tu IP LAN y puerto del servidor ASGI/Channels)
   useEffect(() => {
-    const ws = new WebSocket(`ws://192.168.1.12:8000/ws/chat/${id}/`);
+    const ws = new WebSocket(`ws://192.168.1.8:8000/ws/chat/${id}/`);
 
     ws.onopen = () => {
       console.log("Conectado al WebSocket móvil");

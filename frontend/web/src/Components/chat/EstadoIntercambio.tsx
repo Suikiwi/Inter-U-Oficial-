@@ -16,6 +16,7 @@ const EstadoIntercambio: React.FC<EstadoIntercambioProps> = ({
     estadoInicial ? "realizado" : "pendiente"
   );
   const [puntaje, setPuntaje] = useState<number | null>(null);
+  const [comentario, setComentario] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   const marcarComoRealizado = async () => {
@@ -32,7 +33,9 @@ const EstadoIntercambio: React.FC<EstadoIntercambioProps> = ({
     }
   };
 
-  const enviarCalificacion = async (puntaje: number) => {
+  const enviarCalificacion = async () => {
+    if (!puntaje) return;
+
     try {
       const token = localStorage.getItem("accessToken");
       await axios.post(
@@ -40,13 +43,12 @@ const EstadoIntercambio: React.FC<EstadoIntercambioProps> = ({
         {
           chat: chatId,
           puntaje,
-          comentario: "", // puedes agregar un textarea si quieres comentarios
+          comentario,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setPuntaje(puntaje);
       setEstado("calificado");
       setError(null);
     } catch (err: any) {
@@ -75,7 +77,7 @@ const EstadoIntercambio: React.FC<EstadoIntercambioProps> = ({
             {[1, 2, 3, 4, 5].map((n) => (
               <button
                 key={n}
-                onClick={() => enviarCalificacion(n)}
+                onClick={() => setPuntaje(n)}
                 className={`px-3 py-1 rounded text-sm ${
                   puntaje === n
                     ? "bg-blue-700 text-white"
@@ -86,18 +88,33 @@ const EstadoIntercambio: React.FC<EstadoIntercambioProps> = ({
               </button>
             ))}
           </div>
+
+          <textarea
+            value={comentario}
+            onChange={(e) => setComentario(e.target.value)}
+            placeholder="Escribe un comentario (opcional)"
+            className="w-full bg-slate-700 text-white p-2 rounded-lg text-sm"
+            rows={3}
+          />
+
+          <button
+            onClick={enviarCalificacion}
+            className="w-full py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+          >
+            Enviar calificación
+          </button>
         </div>
       )}
 
       {estado === "calificado" && (
         <div className="text-green-400 text-sm">
-           Intercambio calificado con {puntaje} estrellas
+          Intercambio calificado con {puntaje} estrellas
         </div>
       )}
 
       {error && (
         <div className="text-red-400 text-sm mt-2">
-           {error}
+          {error}
         </div>
       )}
     </div>

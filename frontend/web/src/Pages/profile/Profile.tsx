@@ -248,12 +248,17 @@ const Profile: React.FC = () => {
               {/* Calificaciones recibidas */}
               <div className={`rounded-xl p-8 ${styles.glassEffect}`}>
                 <h3 className="text-xl font-semibold text-purple-100 mb-6">Calificaciones recibidas</h3>
+
                 {calificaciones.length === 0 ? (
                   <p className="text-slate-400 text-sm">Aún no has recibido calificaciones.</p>
                 ) : (
                   <ul className="space-y-4">
                     {calificaciones.map((c) => (
-                      <li key={c.id_calificacion} className="text-slate-300 text-sm border-b border-slate-700 pb-3">
+                      <li
+                        key={c.id_calificacion}
+                        className="text-slate-300 text-sm border-b border-slate-700 pb-3"
+                      >
+                        {/* Estrellas + fecha */}
                         <div className="flex items-center gap-2 mb-1">
                           {Array.from({ length: c.puntaje }).map((_, i) => (
                             <span key={i}>⭐</span>
@@ -262,6 +267,13 @@ const Profile: React.FC = () => {
                             {new Date(c.fecha).toLocaleDateString()}
                           </span>
                         </div>
+
+                       
+                        {c.comentario && (
+                          <p className="text-slate-400 text-sm mt-1">
+                            {c.comentario}
+                          </p>
+                        )}
                       </li>
                     ))}
                   </ul>

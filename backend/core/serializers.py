@@ -101,7 +101,7 @@ class ChatParticipanteSerializer(serializers.ModelSerializer):
 
 
 class MensajeSerializer(serializers.ModelSerializer):
-    autor_alias = serializers.CharField(source="estudiante.perfil.alias", read_only=True)
+    autor_alias = serializers.SerializerMethodField()
 
     class Meta:
         model = Mensaje
@@ -112,9 +112,13 @@ class MensajeSerializer(serializers.ModelSerializer):
             "texto",
             "fecha",
             "leido",
-            "autor_alias", 
+            "autor_alias",
         ]
         read_only_fields = ["id_mensaje", "fecha", "leido", "autor_alias"]
+
+    def get_autor_alias(self, obj):
+        perfil = getattr(obj.estudiante, "perfil", None)
+        return perfil.alias if perfil and perfil.alias else obj.estudiante.username
 
 
 class CalificacionChatSerializer(serializers.ModelSerializer):

@@ -27,14 +27,20 @@ const ChatPage: React.FC = () => {
   const [chatInfo, setChatInfo] = useState<ChatInfo | null>(null);
   const userId = getUserIdFromAccessToken()!;
   const listRef = useRef<HTMLDivElement | null>(null);
-  const vistosRef = useRef<Set<number>>(new Set());
 
+  //  Estados para calificación
+  const [showRating, setShowRating] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comentario, setComentario] = useState("");
+
+  // Scroll automático
   useEffect(() => {
     if (listRef.current) {
       listRef.current.scrollTop = listRef.current.scrollHeight;
     }
   }, [mensajes]);
 
+  // Cargar mensajes
   useEffect(() => {
     const fetchMensajes = async () => {
       try {
@@ -43,7 +49,6 @@ const ChatPage: React.FC = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMensajes(res.data);
-        vistosRef.current = new Set<number>(res.data.map((m: Mensaje) => m.id_mensaje));
       } catch (error) {
         console.error("Error al cargar mensajes:", error);
       }
@@ -51,6 +56,7 @@ const ChatPage: React.FC = () => {
     fetchMensajes();
   }, [id]);
 
+  // Cargar info del chat
   useEffect(() => {
     const fetchChatInfo = async () => {
       try {
@@ -66,6 +72,7 @@ const ChatPage: React.FC = () => {
     fetchChatInfo();
   }, [id]);
 
+  // WebSocket
   useEffect(() => {
     const ws = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${id}/`);
 
@@ -73,21 +80,18 @@ const ChatPage: React.FC = () => {
       const data = JSON.parse(event.data);
       if (data.type !== "message") return;
 
-      const idReal = data.id_mensaje;
-      if (typeof idReal !== "number") return;
-
-      // ✅ Ajuste: en vez de descartar siempre, verificamos en el array actual
       setMensajes((prev) => {
-        if (prev.some((m) => m.id_mensaje === idReal)) {
-          return prev; // ya existe, no duplicar
-        }
-        return [...prev, {
-          id_mensaje: idReal,
-          estudiante: data.estudiante,
-          texto: data.texto,
-          fecha: data.fecha,
-          autor_alias: data.user,
-        }];
+        if (prev.some((m) => m.id_mensaje === data.id_mensaje)) return prev;
+        return [
+          ...prev,
+          {
+            id_mensaje: data.id_mensaje,
+            estudiante: data.estudiante,
+            texto: data.texto,
+            fecha: data.fecha,
+            autor_alias: data.autor_alias,
+          },
+        ];
       });
     };
 
@@ -97,6 +101,7 @@ const ChatPage: React.FC = () => {
     return () => ws.close();
   }, [id]);
 
+  //  Enviar mensaje
   const enviarMensaje = async () => {
     if (nuevoMensaje.trim() === "") return;
 
@@ -111,9 +116,33 @@ const ChatPage: React.FC = () => {
         },
       });
       setNuevoMensaje("");
-      // No hacemos eco local: el backend emite el mensaje y llega por WS
     } catch (error) {
       console.error("Error al enviar mensaje:", error);
+    }
+  };
+
+  //  Enviar calificación
+  const enviarCalificacion = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const payload = {
+        chat: parseInt(id!),
+        puntaje: rating,
+        comentario: comentario,
+      };
+
+      console.log("Enviando calificación:", payload);
+
+      await axios.post(`${API_BASE_URL}/calificaciones-chat/`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setShowRating(false);
+      setRating(0);
+      setComentario("");
+    } catch (error: any) {
+      console.error("Error al enviar calificación:", error.response?.data || error.message);
     }
   };
 
@@ -136,6 +165,7 @@ const ChatPage: React.FC = () => {
         )}
       </div>
 
+      {/* Lista de mensajes */}
       <div
         ref={listRef}
         className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 h-[60vh] overflow-y-auto space-y-3"
@@ -153,7 +183,7 @@ const ChatPage: React.FC = () => {
               }`}
             >
               <span className="block font-semibold">
-                {m.estudiante === userId ? "Yo" : m.autor_alias || `User ${m.estudiante}`}
+                {m.estudiante === userId ? "Yo" : m.autor_alias}
               </span>
               <span>{m.texto}</span>
               <span className="block text-xs text-slate-400 mt-1">
@@ -162,6 +192,7 @@ const ChatPage: React.FC = () => {
             </div>
           </div>
         ))}
+
         {mensajes.length === 0 && (
           <div className="text-center text-slate-400 text-sm py-8">
             Aún no hay mensajes en este chat.
@@ -169,25 +200,79 @@ const ChatPage: React.FC = () => {
         )}
       </div>
 
-      <div className="flex gap-2">
+      {/*  Input + botón para enviar mensajes */}
+      <div className="flex gap-2 mt-4">
         <input
           type="text"
           value={nuevoMensaje}
           onChange={(e) => setNuevoMensaje(e.target.value)}
-          className="flex-1 px-4 py-2 bg-slate-800/50 border border-slate-600/50 rounded-lg text-white focus:border-purple-500 focus:outline-none"
           placeholder="Escribe un mensaje..."
-          onKeyDown={(e) => {
-            if (e.key === "Enter") enviarMensaje();
-          }}
+          className="flex-1 bg-slate-700 text-white px-4 py-2 rounded-lg text-sm"
         />
         <button
           onClick={enviarMensaje}
-          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 text-sm"
         >
           Enviar
         </button>
       </div>
 
+      {/* Botón para finalizar intercambio */}
+      {!chatInfo?.estado_intercambio && (
+        <button
+          onClick={() => setShowRating(true)}
+          className="w-full py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-800"
+        >
+          Finalizar intercambio
+        </button>
+      )}
+
+      {/* Modal de calificación */}
+      {showRating && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
+          <div className="bg-slate-800 p-6 rounded-xl w-96 border border-slate-600">
+            <h2 className="text-xl font-bold text-white mb-4">Califica tu intercambio</h2>
+
+            <div className="flex justify-center mb-4">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <span
+                  key={n}
+                  onClick={() => setRating(n)}
+                  className={`text-3xl cursor-pointer ${
+                    rating >= n ? "text-yellow-400" : "text-slate-500"
+                  }`}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+
+            <textarea
+              value={comentario}
+              onChange={(e) => setComentario(e.target.value)}
+              placeholder="Escribe un comentario (opcional)"
+              className="w-full bg-slate-700 text-white p-3 rounded-lg mb-4"
+              rows={4}
+            />
+
+            <button
+              onClick={enviarCalificacion}
+              className="w-full py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 mb-2"
+            >
+              Enviar calificación
+            </button>
+
+            <button
+              onClick={() => setShowRating(false)}
+              className="w-full py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Estado del intercambio */}
       {chatInfo && (
         <EstadoIntercambio chatId={chatInfo.id_chat} estadoInicial={chatInfo.estado_intercambio} />
       )}

@@ -257,9 +257,11 @@ class MensajeListCreateView(generics.ListCreateAPIView):
                 tipo='nuevo_mensaje',
                 chat=chat
             )
-
+        mensaje = Mensaje.objects.create(chat=chat, estudiante=remitente, texto=texto)
         # Emitir por WebSocket al grupo del chat (usar id_chat y id_mensaje)
         channel_layer = get_channel_layer()
+        perfil = getattr(mensaje.estudiante, "perfil", None)
+        alias = perfil.alias if perfil and perfil.alias else mensaje.estudiante.username
         async_to_sync(channel_layer.group_send)(
     f"chat_{chat.id_chat}",
     {
@@ -268,7 +270,7 @@ class MensajeListCreateView(generics.ListCreateAPIView):
             "texto": mensaje.texto,
             "fecha": mensaje.fecha.isoformat(),
             "estudiante": mensaje.estudiante.id,
-            "user": getattr(mensaje.estudiante, "alias", mensaje.estudiante.username),
+            "autor_alias": alias, 
     }
 )
 

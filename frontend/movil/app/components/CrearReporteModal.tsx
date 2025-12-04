@@ -11,7 +11,7 @@ interface CrearReporteProps {
   onClose: () => void;
 }
 
-const API_BASE_URL = "http://192.168.1.12:8000";
+const API_BASE_URL = "http://192.168.1.8:8000";
 
 export default function CrearReporteModal({ context, onClose }: CrearReporteProps) {
   const [motivo, setMotivo] = useState("");

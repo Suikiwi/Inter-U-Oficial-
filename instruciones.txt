@@ -25,9 +25,6 @@ npm install -D @eslint/js@9.39.1 @tailwindcss/postcss@4.1.17 @types/axios@0.9.36
 npm install lucide-react
 
 
-daphne interu_backend.asgi:application --port 8001
-
-
 
 por seguridad crear admins en la shell
 from core.models import User
@@ -44,12 +41,9 @@ admin.is_staff = True           # acceso al panel Django si lo necesitas
 admin.is_superuser = False      # no es superusuario global
 admin.save()
 
+levantar daphne -b 0.0.0.0 -p 8000 interu_backend.asgi:application
+movil npm run start  
+web npm run dev
 
-
-
-
-revisar doble envio 
-respuesta automatica sin refresh 
-revisar busqueda y mis publicaciones
 
 
