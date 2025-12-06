@@ -113,7 +113,7 @@ const Profile: React.FC = () => {
       <header className={`relative z-10 ${styles.glassEffect}`}>
         <div className="max-w-7xl mx-auto px-4 py-4 border-b border-purple-500/20">
           <div className="flex items-center justify-between">
-            <Link to="/" className="font-['Pacifico'] text-2xl text-primary font-bold">Inter-U</Link>
+            <Link to="/publications" className="font-['Pacifico'] text-2xl text-primary font-bold">Inter-U</Link>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-slate-300">{user?.email}</span>
               <button

@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
-import { Link, useLocation } from "react-router-dom";
-import styles from "../../css/Login.module.css";
+import styles from "../../css/Profile.module.css";   /* mismo CSS que usa Profile */
 
 interface LayoutProps {
   children: ReactNode;
@@ -15,58 +14,41 @@ export const Layout: React.FC<LayoutProps> = ({
   showFooter = true,
   centerContent = false,
 }) => {
-  const location = useLocation();
-
-  // Detecta rutas de chat o perfil de forma robusta (ej. /chat/123, /perfil, /perfil/editar)
-  const isChatOrPerfil = /^\/(perfil|chat)(\/|$)/.test(location.pathname);
-
-  // Redirección condicional del logo:
-  // - Si estás en chat o perfil, lleva a /feed
-  // - En cualquier otra ruta, al home /
-  const logoRedirect = isChatOrPerfil ? "/feed" : "/";
-
   return (
-    <div className="bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen flex flex-col relative overflow-x-hidden">
-      {/* Fondo decorativo */}
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-purple-900/20 via-slate-900/50 to-black/80 pointer-events-none" />
+    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-x-hidden">
+      {/* Fondos (copiados de Profile) */}
+      <div className="fixed inset-0 bg-[radial-linear(ellipse_at_top,var(--tw-linear-stops))] from-purple-900/20 via-slate-900/50 to-black/80 pointer-events-none" />
       <div className="fixed top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse pointer-events-none" />
       <div className="fixed bottom-1/4 right-1/4 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl animate-pulse delay-1000 pointer-events-none" />
 
-      {/* Header solo con logo */}
+      {/* Header idéntico al de Profile */}
       {showHeader && (
         <header className={`relative z-10 ${styles.glassEffect}`}>
           <div className="max-w-7xl mx-auto px-4 py-4 border-b border-purple-500/20">
             <div className="flex items-center justify-between">
-              <Link
-                to={logoRedirect}
-                className="font-['Pacifico'] text-2xl text-primary font-bold"
-              >
-                Inter-U
-              </Link>
+              <span className="font-['Pacifico'] text-2xl text-primary font-bold">Inter-U</span>
             </div>
           </div>
         </header>
       )}
 
-      {/* Contenido */}
-      <main
-        className={`flex-1 relative z-10 ${
-          centerContent ? "flex items-center justify-center py-12 px-4" : "px-4 py-10"
-        }`}
-      >
-        {children}
+      {/* Main con el mismo espaciado que Profile */}
+      <main className="relative z-10 py-12 px-4">
+        <div className={`max-w-7xl mx-auto ${centerContent ? "flex items-center justify-center min-h-[calc(100vh-8rem)]" : ""}`}>
+          {children}
+        </div>
       </main>
 
-      {/* Footer */}
+      {/* Footer idéntico al de Profile */}
       {showFooter && (
-        <footer className={`relative z-10 mt-auto ${styles.glassEffect}`}>
+        <footer className={`relative z-10 ${styles.glassEffect}`}>
           <div className="max-w-7xl mx-auto px-4 py-6 border-t border-purple-500/20">
             <div className="text-center text-sm text-slate-400">
               <p>© 2025 Inter-U. Todos los derechos reservados.</p>
               <div className="flex justify-center space-x-4 mt-2">
-                <Link to="/privacy" className="text-purple-400 hover:text-purple-300">Políticas</Link>
-                <Link to="/terms" className="text-purple-400 hover:text-purple-300">Términos</Link>
-                <Link to="/support" className="text-purple-400 hover:text-purple-300">Soporte</Link>
+                <span className="text-purple-400">Políticas</span>
+                <span className="text-purple-400">Términos</span>
+                <span className="text-purple-400">Soporte</span>
               </div>
             </div>
           </div>

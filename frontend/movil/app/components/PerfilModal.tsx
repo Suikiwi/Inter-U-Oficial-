@@ -16,7 +16,7 @@ type Props = {
   onClose: () => void;
 };
 
-const API_BASE_URL = "http://192.168.1.12:8000";
+const API_BASE_URL = "http://192.168.1.7:8000";
 
 export default function PerfilModal({ id, onClose }: Props) {
   const [perfil, setPerfil] = useState<any>(null);

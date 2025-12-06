@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from "react";
 import {
   View,
@@ -106,9 +105,9 @@ export default function ChatScreen({ id, onClose }: ChatScreenProps) {
     listRef.current?.scrollToEnd({ animated: true });
   }, [mensajes.length]);
 
-  // WebSocket en tiempo real (usa tu IP LAN y puerto del servidor ASGI/Channels)
+  // WebSocket en tiempo real
   useEffect(() => {
-    const ws = new WebSocket(`ws://192.168.1.8:8000/ws/chat/${id}/`);
+    const ws = new WebSocket(`ws://192.168.1.7:8000/ws/chat/${id}/`);
 
     ws.onopen = () => {
       console.log("Conectado al WebSocket móvil");
@@ -116,15 +115,17 @@ export default function ChatScreen({ id, onClose }: ChatScreenProps) {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      if (data.type !== "message") return;
 
-      // Evita duplicados: si yo misma emití por WS, no lo agrego aquí
-      if (data.user === "Yo") return;
+      // Evita duplicados
+      if (mensajes.some((m) => m.id === data.id_mensaje)) return;
 
       const nuevo: Mensaje = {
-        id: Date.now(), // temporal
-        texto: data.message,
-        autor_alias: data.user,
-        fecha_creacion: new Date().toISOString(),
+        id: data.id_mensaje,
+        texto: data.texto,
+        autor_alias: data.autor_alias || "Anónimo",
+        fecha_creacion: data.fecha,
+        estudiante: data.estudiante,
       };
       setMensajes((prev) => [...prev, nuevo]);
     };
@@ -135,30 +136,22 @@ export default function ChatScreen({ id, onClose }: ChatScreenProps) {
 
     setSocket(ws);
     return () => ws.close();
-  }, [id]);
+  }, [id, mensajes]);
 
-  // Enviar mensaje: persistir en API y difundir por WS
+  // Enviar mensaje
   const handleEnviarMensaje = async () => {
     if (!nuevoMensaje.trim()) return;
     try {
-      // Persistencia en backend (devuelve mensaje con id, autor, fecha, alias, estudiante)
       const msg = await enviarMensaje(Number(id), nuevoMensaje);
       setMensajes((prev) => [...prev, msg]);
-
-      // Difusión por WebSocket (solo si está abierto)
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({ message: nuevoMensaje, user: "Yo" }));
-      } else {
-        console.warn("WebSocket no está abierto; se envió solo por API.");
-      }
-
       setNuevoMensaje("");
+      // No envíes nada por WS manualmente; el backend lo hace
     } catch {
       Alert.alert("Error", "No se pudo enviar el mensaje.");
     }
   };
 
-  // Finalizar intercambio y abrir calificación
+  // Finalizar intercambio
   const marcarComoRealizado = async () => {
     try {
       const updated = await completarIntercambio(Number(id));
@@ -170,7 +163,7 @@ export default function ChatScreen({ id, onClose }: ChatScreenProps) {
     }
   };
 
-  // Enviar calificación al backend
+  // Enviar calificación
   const enviarCalificacion = async () => {
     if (!puntaje || puntaje < 1 || puntaje > 5) {
       Alert.alert("Selecciona un puntaje entre 1 y 5");
@@ -181,7 +174,7 @@ export default function ChatScreen({ id, onClose }: ChatScreenProps) {
       setEstado("calificado");
       setShowCalificacion(false);
       Alert.alert("Calificación registrada");
-      onClose(); // opcional: cerrar pantalla tras calificar
+      onClose();
     } catch {
       Alert.alert("Error", "Ya has calificado este chat o no tienes permiso.");
     }
@@ -310,18 +303,13 @@ export default function ChatScreen({ id, onClose }: ChatScreenProps) {
 }
 
 const styles = StyleSheet.create({
-  // Layout base
   container: { flex: 1, backgroundColor: "#1A1A2E", padding: 20 },
-
-  // Header
   headerRow: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
   backBtn: { paddingHorizontal: 10, paddingVertical: 6, backgroundColor: "#2E2E48", borderRadius: 8 },
   backText: { color: "#fff", fontWeight: "600" },
   title: { fontSize: 20, fontWeight: "bold", color: "#8A4FFF" },
   alias: { fontSize: 14, color: "#C084FC", marginTop: 4 },
   estado: { fontSize: 12, color: "#aaa", marginTop: 2 },
-
-  // Mensajes
   msgRow: { flexDirection: "row", marginBottom: 10 },
   msgLeft: { justifyContent: "flex-start" },
   msgRight: { justifyContent: "flex-end" },
@@ -331,8 +319,6 @@ const styles = StyleSheet.create({
   msgAuthor: { fontWeight: "bold", color: "#fff" },
   msgText: { color: "#fff", marginTop: 2 },
   msgTime: { color: "#ddd", fontSize: 10, marginTop: 4, alignSelf: "flex-end" },
-
-  // Input y acciones
   inputBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -351,7 +337,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   sendButtonText: { color: "#fff", fontWeight: "bold" },
-
   footerBar: { marginTop: 8 },
   primaryButton: {
     backgroundColor: "#8A4FFF",
@@ -360,7 +345,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   primaryButtonText: { color: "#fff", fontWeight: "bold" },
-
   secondaryButton: {
     backgroundColor: "#444",
     paddingVertical: 12,
@@ -368,8 +352,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   secondaryButtonText: { color: "#fff", fontWeight: "600" },
-
-  // Modal
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.6)",
@@ -401,8 +383,6 @@ const styles = StyleSheet.create({
   },
   modalActions: { flexDirection: "row", gap: 8, marginTop: 8 },
   modalAction: { flex: 1 },
-
-  // Estrellas
   starsRow: { flexDirection: "row", justifyContent: "center", marginVertical: 8 },
   star: { fontSize: 28 },
   starActive: { color: "#8A4FFF" },

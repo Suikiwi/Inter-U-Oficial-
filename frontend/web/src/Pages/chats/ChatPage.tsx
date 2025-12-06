@@ -28,11 +28,6 @@ const ChatPage: React.FC = () => {
   const userId = getUserIdFromAccessToken()!;
   const listRef = useRef<HTMLDivElement | null>(null);
 
-  //  Estados para calificación
-  const [showRating, setShowRating] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [comentario, setComentario] = useState("");
-
   // Scroll automático
   useEffect(() => {
     if (listRef.current) {
@@ -101,7 +96,7 @@ const ChatPage: React.FC = () => {
     return () => ws.close();
   }, [id]);
 
-  //  Enviar mensaje
+  // Enviar mensaje
   const enviarMensaje = async () => {
     if (nuevoMensaje.trim() === "") return;
 
@@ -118,31 +113,6 @@ const ChatPage: React.FC = () => {
       setNuevoMensaje("");
     } catch (error) {
       console.error("Error al enviar mensaje:", error);
-    }
-  };
-
-  //  Enviar calificación
-  const enviarCalificacion = async () => {
-    try {
-      const token = localStorage.getItem("accessToken");
-
-      const payload = {
-        chat: parseInt(id!),
-        puntaje: rating,
-        comentario: comentario,
-      };
-
-      console.log("Enviando calificación:", payload);
-
-      await axios.post(`${API_BASE_URL}/calificaciones-chat/`, payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setShowRating(false);
-      setRating(0);
-      setComentario("");
-    } catch (error: any) {
-      console.error("Error al enviar calificación:", error.response?.data || error.message);
     }
   };
 
@@ -173,7 +143,9 @@ const ChatPage: React.FC = () => {
         {mensajes.map((m) => (
           <div
             key={m.id_mensaje}
-            className={`flex ${m.estudiante === userId ? "justify-end" : "justify-start"}`}
+            className={`flex ${
+              m.estudiante === userId ? "justify-end" : "justify-start"
+            }`}
           >
             <div
               className={`px-3 py-2 rounded-lg text-sm max-w-[70%] ${
@@ -187,7 +159,10 @@ const ChatPage: React.FC = () => {
               </span>
               <span>{m.texto}</span>
               <span className="block text-xs text-slate-400 mt-1">
-                {new Date(m.fecha).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                {new Date(m.fecha).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </span>
             </div>
           </div>
@@ -200,7 +175,7 @@ const ChatPage: React.FC = () => {
         )}
       </div>
 
-      {/*  Input + botón para enviar mensajes */}
+      {/* Input + botón para enviar mensajes */}
       <div className="flex gap-2 mt-4">
         <input
           type="text"
@@ -217,64 +192,12 @@ const ChatPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Botón para finalizar intercambio */}
-      {!chatInfo?.estado_intercambio && (
-        <button
-          onClick={() => setShowRating(true)}
-          className="w-full py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-800"
-        >
-          Finalizar intercambio
-        </button>
-      )}
-
-      {/* Modal de calificación */}
-      {showRating && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
-          <div className="bg-slate-800 p-6 rounded-xl w-96 border border-slate-600">
-            <h2 className="text-xl font-bold text-white mb-4">Califica tu intercambio</h2>
-
-            <div className="flex justify-center mb-4">
-              {[1, 2, 3, 4, 5].map((n) => (
-                <span
-                  key={n}
-                  onClick={() => setRating(n)}
-                  className={`text-3xl cursor-pointer ${
-                    rating >= n ? "text-yellow-400" : "text-slate-500"
-                  }`}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
-
-            <textarea
-              value={comentario}
-              onChange={(e) => setComentario(e.target.value)}
-              placeholder="Escribe un comentario (opcional)"
-              className="w-full bg-slate-700 text-white p-3 rounded-lg mb-4"
-              rows={4}
-            />
-
-            <button
-              onClick={enviarCalificacion}
-              className="w-full py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 mb-2"
-            >
-              Enviar calificación
-            </button>
-
-            <button
-              onClick={() => setShowRating(false)}
-              className="w-full py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700"
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Estado del intercambio */}
+      {/* Estado del intercambio (maneja finalización y calificación) */}
       {chatInfo && (
-        <EstadoIntercambio chatId={chatInfo.id_chat} estadoInicial={chatInfo.estado_intercambio} />
+        <EstadoIntercambio
+          chatId={chatInfo.id_chat}
+          estadoInicial={chatInfo.estado_intercambio}
+        />
       )}
     </div>
   );
